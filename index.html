@@ -72,8 +72,8 @@
             if (userInput === correctPassword) {
                 // 密码正确，使用 sessionStorage 存储一个已验证的标志
                 sessionStorage.setItem('isAuthenticated', 'true');
-                // 【核心修改】跳转到你的索引/选择页面 (index.html)
-                window.location.href = 'index.html'; 
+                // 跳转到你的主页
+                window.location.href = 'main.html';
             } else {
                 alert('访问码错误，请重试！');
             }
@@ -83,5 +83,7 @@
         }
     </script>
 
+</body>
+</html>
 </body>
 </html>
