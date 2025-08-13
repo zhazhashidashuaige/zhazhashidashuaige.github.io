@@ -3,30 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>选择版本</title>
-
-<!-- ▼▼▼ 全新的、更智能的“守卫”脚本 ▼▼▼ -->
-<script>
-    const token = localStorage.getItem('session_token');
-    const loginDate = localStorage.getItem('session_date');
-
-    // 计算今天的日期 (UTC)
-    const now = new Date();
-    const year = now.getUTCFullYear();
-    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(now.getUTCDate()).padStart(2, '0');
-    const todayString = `${year}-${month}-${day}`;
-
-    // 【新的检查规则】
-    // 1. 没有通行证？ -> 去登录！
-    // 2. 或者，通行证的日期不是今天？ -> 去登录！
-    if (!token || loginDate !== todayString) {
-        // 在跳转前，清空旧的无效凭证
-        localStorage.removeItem('session_token');
-        localStorage.removeItem('session_date');
-        window.location.href = '/login.html';
+  
+  <!-- ▼▼▼ 【核心】页面守卫脚本 ▼▼▼ -->
+  <!-- 这段脚本会检查用户是否已经登录，如果没有，就踢回登录页 -->
+  <script>
+    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
+        alert('请先登录！');
+        window.location.href = 'login.html';
     }
-</script>
-<!-- ▲▲▲ 替换结束 ▲▲▲ -->
+  </script>
+  <!-- ▲▲▲ 守卫脚本结束 ▲▲▲ -->
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
