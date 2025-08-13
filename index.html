@@ -1,90 +1,87 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>选择版本</title>
-  
-  <!-- ▼▼▼ 【核心】页面守卫脚本 ▼▼▼ -->
-  <!-- 这段脚本会检查用户是否已经登录，如果没有，就踢回登录页 -->
-  <script>
-    if (sessionStorage.getItem('isAuthenticated') !== 'true') {
-        alert('请先登录！');
-        window.location.href = 'login.html';
-    }
-  </script>
-  <!-- ▲▲▲ 守卫脚本结束 ▲▲▲ -->
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f8f8f8;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 60px;
-      text-align: center;
-    }
-
-    .button {
-      width: 90vw;
-      max-width: 380px;
-      padding: 24px 0;
-      margin: 20px 0;
-      font-size: 22px;
-      border: none;
-      border-radius: 12px;
-      background-color: #444;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-
-    .button:hover {
-      background-color: #666;
-    }
-
-    .note {
-      margin-top: 24px;
-      font-size: 16px;
-      color: #666;
-      text-align: center;
-      padding: 0 20px;
-      font-weight: bold;
-    }
-
-    .note.warning {
-      color: #b30000;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>请输入访问码</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-  <h1>请选择你想使用的版本</h1>
 
-  <div style="margin: 20px 0; font-size: 15px; text-align: center; color: #333; line-height: 1.6; font-weight: bold;">
-  <a href="https://discord.com/channels/1379304008157499423/1396726775840768060" target="_blank">JCY二改Ephone</a> © 2025 by 
-  <a href="https://creativecommons.org" target="_blank">JCY</a><br>
-  本作品采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0 协议</a> 进行许可<br>
-  <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1.2em; max-height: 1.2em; margin: 0 .2em;" alt="CC">
-  <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1.2em; max-height: 1.2em; margin: 0 .2em;" alt="BY">
-  <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" style="max-width: 1.2em; max-height: 1.2em; margin: 0 .2em;" alt="NC">
-  <img src="https://mirrors.creativecommons.org/presskit/icons/nd.svg" style="max-width: 1.2em; max-height: 1.2em; margin: 0 .2em;" alt="ND">
-  </div>
+    <div class="login-container">
+        <h1>请输入访问码</h1>
+        <form onsubmit="return checkPassword()">
+            <input type="password" id="password-input" class="password-input" placeholder="请输入你的访问码" required>
+            <button type="submit" class="submit-btn">进入页面</button>
+        </form>
+    </div>
 
-  <button class="button" onclick="location.href='bordered.html'">📱 有边框版本</button>
-  <button class="button" onclick="location.href='borderless.html'">📲 无边框版本</button>
-  <button class="button" onclick="location.href='fullscreen.html'">🧷 Safari全屏版本</button>
+    <script>
+        function checkPassword() {
+            // 在这里设置你的密码
+            const correctPassword = "tudou"; 
 
-  <p class="note">💾 三个版本数据互通，只要你访问的是同一域名以及同一浏览器打开即可</p>
-  <p class="note warning">⚠️ iOS全屏用户请记得先备份导出数据，再重新导入</p>
-  
+            const userInput = document.getElementById('password-input').value;
+
+            if (userInput === correctPassword) {
+                // 密码正确，使用 sessionStorage 存储一个已验证的标志
+                sessionStorage.setItem('isAuthenticated', 'true');
+                // 【核心修改】跳转到你的索引/选择页面 (index.html)
+                window.location.href = 'index.html'; 
+            } else {
+                alert('访问码错误，请重试！');
+            }
+
+            // return false 阻止表单的默认提交行为
+            return false;
+        }
+    </script>
+
 </body>
 </html>
