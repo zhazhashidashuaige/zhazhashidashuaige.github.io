@@ -5803,6 +5803,35 @@ input:checked + .slider:before {
     border-radius: 3px;
     transition: width 0.5s ease-in-out;
 }
+/* ▼▼▼ 【全新】后台活动设置界面样式 ▼▼▼ */
+.char-list-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 5px;
+    border-bottom: 1px solid #eee;
+}
+.char-list-item:last-child {
+    border-bottom: none;
+}
+.char-list-item input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+}
+.char-list-item .char-name {
+    flex-grow: 1;
+}
+.char-list-item .char-freq-badge {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 10px;
+    color: white;
+}
+.char-freq-badge.low { background-color: #28a745; }
+.char-freq-badge.medium { background-color: #fd7e14; }
+.char-freq-badge.high { background-color: #dc3545; }
+/* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
 
 /* ▲▲▲ 样式添加结束 ▲▲▲ */
 
@@ -5972,30 +6001,62 @@ input:checked + .slider:before {
 <!-- ▲▲▲ 新代码粘贴结束 ▲▲▲ -->
 <button class="form-button" id="fetch-models-btn">拉取模型</button>
 
-<!-- ▼▼▼ 将这段代码粘贴到 API 设置页面的“保存设置”按钮上方 ▼▼▼ -->
+<!-- ▼▼▼ 从这里开始，是全新的后台活动设置区 ▼▼▼ -->
 <hr style="margin:20px 0; opacity:.3">
+
+<!-- 1. 总开关 -->
 <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
     <label for="background-activity-switch" style="margin-bottom: 0;">
-        启用后台角色活动
+        启用后台角色活动 (总开关)
         <p style="font-size: 12px; font-weight: normal; color: #ff6b6b; margin-top: 5px;">
-            警告：此功能会显著增加API调用和费用！
+            警告：开启后会显著增加API调用和费用！
         </p>
     </label>
-    <input type="checkbox" id="background-activity-switch" style="width: auto; height: 20px;">
+    <!-- 【重要】我们把原来的 checkbox 换成了更美观的 iOS 风格开关 -->
+    <label class="toggle-switch">
+        <input type="checkbox" id="background-activity-switch">
+        <span class="slider"></span>
+    </label>
 </div>
-<!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
 
-<!-- ▼▼▼ 将这段代码粘贴到“启用后台角色活动”开关的下方 ▼▼▼ -->
-<div class="form-group" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-    <label for="background-interval-input" style="margin-bottom: 0;">
-        后台活动检测间隔 (秒)
-        <p style="font-size: 12px; font-weight: normal; color: #999; margin-top: 5px;">
-            建议值 60-300。值越大，费用越低，但角色反应越慢。
+<!-- 2. 后台活动详细设置 (默认隐藏，由总开关控制) -->
+<div id="background-activity-details" style="display: none;">
+    <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+        <label for="background-interval-input" style="margin-bottom: 0;">
+            后台活动检测间隔 (秒)
+            <p style="font-size: 12px; font-weight: normal; color: #999; margin-top: 5px;">
+                建议值 60-300。值越大，费用越低，但角色反应越慢。
+            </p>
+        </label>
+        <input type="number" id="background-interval-input" min="30" value="60" style="width: 80px; text-align: center;">
+    </div>
+
+    <!-- 3. 角色选择与频率设置 -->
+    <div class="form-group">
+        <label>设置角色活动频率</label>
+        <div id="background-activity-char-list" style="max-height: 150px; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <!-- 角色列表将由JS动态生成在这里 -->
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button id="bg-select-all-chars" class="form-button-secondary" style="flex:1; margin:0;">全选</button>
+            <button id="bg-deselect-all-chars" class="form-button-secondary" style="flex:1; margin:0;">全不选</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>为选中角色设置频率</label>
+        <div style="display: flex; gap: 10px;">
+            <button class="form-button-secondary bg-freq-btn" data-freq="low" style="flex:1; margin:0; border-color: #28a745;">低</button>
+            <button class="form-button-secondary bg-freq-btn" data-freq="medium" style="flex:1; margin:0; border-color: #fd7e14;">中</button>
+            <button class="form-button-secondary bg-freq-btn" data-freq="high" style="flex:1; margin:0; border-color: #dc3545;">高</button>
+        </div>
+        <p style="font-size: 12px; font-weight: normal; color: #999; margin-top: 8px;">
+            频率越高，角色主动行为的概率越大，费用也越高。
         </p>
-    </label>
-    <input type="number" id="background-interval-input" min="30" value="60" style="width: 80px; text-align: center;">
+    </div>
 </div>
-<!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
+<!-- ▲▲▲ 全新的后台活动设置区结束 ▲▲▲ -->
+
 
 <!-- ▼▼▼ 在这里新增 ▼▼▼ -->
 <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
@@ -9313,6 +9374,7 @@ state.globalSettings = globalSettings || {
     enableBackgroundActivity: false, 
     backgroundActivityInterval: 60,
     blockCooldownHours: 1,
+    backgroundActivityConfig: {}, // <-- 【【【在这里添加这一行新代码】】】
     appIcons: { ...DEFAULT_APP_ICONS },
     ringtoneUrl: 'https://files.catbox.moe/3w7gla.mp3' // <-- 【核心新增】在这里添加默认铃声URL
 };
@@ -9404,13 +9466,66 @@ function parseAiResponse(content) {
 }
 
         function renderApiSettings() { document.getElementById('proxy-url').value = state.apiConfig.proxyUrl || ''; document.getElementById('api-key').value = state.apiConfig.apiKey || ''; 
+        
     // ▼▼▼ 新增这行 ▼▼▼
     document.getElementById('background-activity-switch').checked = state.globalSettings.enableBackgroundActivity || false;
     document.getElementById('background-interval-input').value = state.globalSettings.backgroundActivityInterval || 60;
     document.getElementById('block-cooldown-input').value = state.globalSettings.blockCooldownHours || 1;
 
    renderApiPresetSelector(); // 👈 在这里添加这一行
+   function renderApiSettings() { 
+    document.getElementById('proxy-url').value = state.apiConfig.proxyUrl || ''; 
+    document.getElementById('api-key').value = state.apiConfig.apiKey || ''; 
+    document.getElementById('background-activity-switch').checked = state.globalSettings.enableBackgroundActivity || false;
+    document.getElementById('background-interval-input').value = state.globalSettings.backgroundActivityInterval || 60;
+    document.getElementById('block-cooldown-input').value = state.globalSettings.blockCooldownHours || 1;
+    renderApiPresetSelector();
+    renderBackgroundFrequencySelector(); // <-- 【【【在这里添加这一行新代码】】】
 }
+
+}
+// ▼▼▼ 【全新】粘贴这个完整的函数 ▼▼▼
+/**
+ * 渲染后台活动的角色选择和频率设置UI
+ */
+function renderBackgroundFrequencySelector() {
+    const container = document.getElementById('background-activity-char-list');
+    const detailsContainer = document.getElementById('background-activity-details');
+    const masterSwitch = document.getElementById('background-activity-switch');
+
+    // 根据总开关的状态，决定是否显示详细设置
+    detailsContainer.style.display = masterSwitch.checked ? 'block' : 'none';
+    
+    container.innerHTML = ''; // 清空旧列表
+    const singleChats = Object.values(state.chats).filter(chat => !chat.isGroup);
+
+    if (singleChats.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">还没有可以设置的角色</p>';
+        return;
+    }
+
+    const config = state.globalSettings.backgroundActivityConfig || {};
+
+    singleChats.forEach(chat => {
+        const freq = config[chat.id] || 'none'; // 获取当前角色的频率设置
+        let badgeHtml = '';
+        if (freq !== 'none') {
+            const freqText = { low: '低', medium: '中', high: '高' }[freq];
+            badgeHtml = `<span class="char-freq-badge ${freq}">${freqText}</span>`;
+        }
+
+        const item = document.createElement('div');
+        item.className = 'char-list-item';
+        item.innerHTML = `
+            <input type="checkbox" class="bg-char-checkbox" data-chat-id="${chat.id}">
+            <span class="char-name">${chat.name}</span>
+            ${badgeHtml}
+        `;
+        container.appendChild(item);
+    });
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
+
         window.renderApiSettingsProxy = renderApiSettings;
 
 // ▼▼▼ 请用这个【全新修正版】替换旧的 renderChatList 函数 ▼▼▼
@@ -12512,6 +12627,10 @@ function stopBackgroundSimulation() {
 /**
  * 这是模拟器的“心跳”，每次定时器触发时运行
  */
+// ▼▼▼ 【全新】用这个函数完整替换旧的 runBackgroundSimulationTick ▼▼▼
+/**
+ * 这是模拟器的“心跳”，每次定时器触发时运行
+ */
 function runBackgroundSimulationTick() {
     console.log("模拟器心跳 Tick...");
     if (!state.globalSettings.enableBackgroundActivity) {
@@ -12522,43 +12641,49 @@ function runBackgroundSimulationTick() {
 
     if (allSingleChats.length === 0) return;
 
-    allSingleChats.forEach(chat => {
-        // 【核心修正】将两种状态检查分离开，逻辑更清晰
+    // 【核心改造】定义不同频率对应的行动概率
+    const frequencyProbabilities = {
+        low: 0.1,    // 低频: 每次检测有 10% 的概率行动
+        medium: 0.25,  // 中频: 每次检测有 25% 的概率行动
+        high: 0.5,   // 高频: 每次检测有 50% 的概率行动
+    };
 
-        // 检查1：处理【被用户拉黑】的角色
+    const config = state.globalSettings.backgroundActivityConfig || {};
+
+    allSingleChats.forEach(chat => {
+        // 检查1：处理【被用户拉黑】的角色 (这部分逻辑不变)
         if (chat.relationship?.status === 'blocked_by_user') {
             const blockedTimestamp = chat.relationship.blockedTimestamp;
-            // 安全检查：确保有拉黑时间戳
             if (!blockedTimestamp) {
                 console.warn(`角色 "${chat.name}" 状态为拉黑，但缺少拉黑时间戳，跳过处理。`);
-                return; // 跳过这个角色，继续下一个
+                return;
             }
-
             const blockedDuration = Date.now() - blockedTimestamp;
             const cooldownMilliseconds = (state.globalSettings.blockCooldownHours || 1) * 60 * 60 * 1000;
-
-            console.log(`检查角色 "${chat.name}"：已拉黑 ${Math.round(blockedDuration/1000/60)}分钟，冷静期需 ${cooldownMilliseconds/1000/60}分钟。`); // 添加日志
-
-            // 【核心修改】移除了随机概率，只要冷静期一过，就触发！
             if (blockedDuration > cooldownMilliseconds) {
                 console.log(`角色 "${chat.name}" 的冷静期已过，触发“反思”并申请好友事件...`);
-                
-                // 【重要】为了防止在AI响应前重复触发，我们在触发后立刻更新状态
-                chat.relationship.status = 'pending_system_reflection'; // 设置一个临时的、防止重复触发的状态
-                
+                chat.relationship.status = 'pending_system_reflection';
                 triggerAiFriendApplication(chat.id);
             }
         }
         // 检查2：处理【好友关系】的正常后台活动
         else if (chat.relationship?.status === 'friend' && chat.id !== state.activeChatId) {
-            // 这里的随机触发逻辑保持不变，因为我们不希望所有好友同时行动
-            if (Math.random() < 0.20) {
-                console.log(`角色 "${chat.name}" 被唤醒，准备独立行动...`);
+            // 【核心改造】从这里开始
+            const frequency = config[chat.id]; // 获取当前角色的频率设置
+            const probability = frequencyProbabilities[frequency]; // 获取对应的概率
+
+            // 如果这个角色设置了频率，并且随机数小于它的行动概率，就触发行动
+            if (probability && Math.random() < probability) {
+                console.log(`角色 "${chat.name}" (频率: ${frequency}) 被唤醒，准备独立行动...`);
                 triggerInactiveAiAction(chat.id);
             }
+            // 如果没有设置频率，或者随机数没达到概率，就不会行动。
+            // 这就完美地实现了“分组设置”和“不会同时行动”的需求！
         }
     });
 }
+// ▲▲▲ 替换结束 ▲▲▲
+
 
 async function triggerInactiveAiAction(chatId) {
     const chat = state.chats[chatId];
@@ -21883,6 +22008,54 @@ document.getElementById('save-persona-preset-btn').addEventListener('click', () 
         savePersonaPreset(); // 如果不是在编辑NPC，就执行原来的保存人设逻辑
     }
 });
+// ▼▼▼ 【全新】粘贴这整块事件监听器代码 ▼▼▼
+// --- 后台活动设置界面的事件绑定 ---
+
+// 1. 总开关的事件
+document.getElementById('background-activity-switch').addEventListener('change', () => {
+    // 每次点击总开关，都重新渲染一次详细设置区（它会根据开关状态自动显示或隐藏）
+    renderBackgroundFrequencySelector();
+});
+
+// 2. 全选按钮
+document.getElementById('bg-select-all-chars').addEventListener('click', () => {
+    document.querySelectorAll('.bg-char-checkbox').forEach(checkbox => {
+        checkbox.checked = true;
+    });
+});
+
+// 3. 全不选按钮
+document.getElementById('bg-deselect-all-chars').addEventListener('click', () => {
+    document.querySelectorAll('.bg-char-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+});
+
+// 4. 为三个频率按钮（低、中、高）绑定事件 (使用事件委托)
+document.querySelector('#background-activity-details').addEventListener('click', (e) => {
+    if (e.target.classList.contains('bg-freq-btn')) {
+        const freq = e.target.dataset.freq;
+        const selectedCheckboxes = document.querySelectorAll('.bg-char-checkbox:checked');
+        
+        if (selectedCheckboxes.length === 0) {
+            alert('请先选择至少一个角色！');
+            return;
+        }
+
+        const config = state.globalSettings.backgroundActivityConfig || {};
+        selectedCheckboxes.forEach(checkbox => {
+            const chatId = checkbox.dataset.chatId;
+            config[chatId] = freq;
+        });
+        
+        state.globalSettings.backgroundActivityConfig = config;
+        
+        // 应用后，立刻重新渲染列表，让用户看到最新的频率标签
+        renderBackgroundFrequencySelector();
+        alert(`已为 ${selectedCheckboxes.length} 个角色设置频率为 "${{low:'低', medium:'中', high:'高'}[freq]}"`);
+    }
+});
+// ▲▲▲ 新代码粘贴结束 ▲▲▲
 
 // ▲▲▲ 新事件绑定结束 ▲▲▲
 
