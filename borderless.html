@@ -12234,14 +12234,26 @@ function updatePlaylistUI() {
         playlistBody.appendChild(item);
     });
 }
-
-function playSong(index) {
+async function loadSong(index) {
     if (index < 0 || index >= musicState.playlist.length) return;
     musicState.currentIndex = index;
     const track = musicState.playlist[index];
+
+    // 检查并加载网络歌词
+    if (track.lrcUrl && !track.lrcContent) {
+        try {
+            const response = await fetch(track.lrcUrl);
+            if (response.ok) track.lrcContent = await response.text();
+        } catch (error) {
+            console.error("加载歌词URL失败:", error);
+        }
+    }
+
+    // 准备播放
     musicState.parsedLyrics = parseLRC(track.lrcContent || "");
     musicState.currentLyricIndex = -1;
     renderLyrics();
+
     if (track.isLocal && track.src instanceof Blob) {
         audioPlayer.src = URL.createObjectURL(track.src);
     } else if (!track.isLocal) {
@@ -12250,13 +12262,38 @@ function playSong(index) {
         console.error('本地歌曲源错误:', track);
         return;
     }
-    audioPlayer.play();
+
+    // 更新界面信息，但不播放
     updatePlaylistUI();
     updatePlayerUI();
-    updateMusicProgressBar();
+    // audioPlayer.duration 可能需要一点时间加载，我们监听事件来更新进度条
+    audioPlayer.onloadedmetadata = () => {
+        updateMusicProgressBar();
+    };
 }
 
-        function togglePlayPause() { if (audioPlayer.paused) { if (musicState.currentIndex === -1 && musicState.playlist.length > 0) { playSong(0); } else if (musicState.currentIndex > -1) { audioPlayer.play(); } } else { audioPlayer.pause(); } }
+async function playSong(index) {
+    // 先调用我们的新函数来加载好一切
+    await loadSong(index);
+    // 然后，直接播放！
+    audioPlayer.play();
+}
+
+
+
+function togglePlayPause() {
+    if (audioPlayer.paused) {
+        // 如果播放器是暂停的，并且已经有选中的歌曲了
+        if (musicState.currentIndex > -1) {
+            // 就直接调用 playSong 来播放当前这首歌
+            playSong(musicState.currentIndex);
+        }
+    } else {
+        // 如果正在播放，就暂停它
+        audioPlayer.pause();
+    }
+}
+
 
         function playNext() { if (musicState.playlist.length === 0) return; let nextIndex; switch(musicState.playMode) { case 'random': nextIndex = Math.floor(Math.random() * musicState.playlist.length); break; case 'single': playSong(musicState.currentIndex); return; case 'order': default: nextIndex = (musicState.currentIndex + 1) % musicState.playlist.length; break; } playSong(nextIndex); }
 
@@ -12264,7 +12301,47 @@ function playSong(index) {
 
         function changePlayMode() { const modes = ['order', 'random', 'single']; const currentModeIndex = modes.indexOf(musicState.playMode); musicState.playMode = modes[(currentModeIndex + 1) % modes.length]; document.getElementById('music-mode-btn').textContent = {'order': '顺序', 'random': '随机', 'single': '单曲'}[musicState.playMode]; }
 
-        async function addSongFromURL() { const url = await showCustomPrompt("添加网络歌曲", "请输入歌曲的URL", "", "url"); if (!url) return; const name = await showCustomPrompt("歌曲信息", "请输入歌名"); if (!name) return; const artist = await showCustomPrompt("歌曲信息", "请输入歌手名"); if (!artist) return; musicState.playlist.push({ name, artist, src: url, isLocal: false }); await saveGlobalPlaylist(); updatePlaylistUI(); if(musicState.currentIndex === -1) { musicState.currentIndex = musicState.playlist.length - 1; updatePlayerUI(); } }
+        async function addSongFromURL() {
+    const url = await showCustomPrompt("添加网络歌曲", "请输入歌曲的URL", "", "url");
+    if (!url) return;
+    const name = await showCustomPrompt("歌曲信息", "请输入歌名");
+    if (!name) return;
+    const artist = await showCustomPrompt("歌曲信息", "请输入歌手名");
+    if (!artist) return;
+
+    // ▼▼▼【核心修改在这里】▼▼▼
+    // 1. 先弹窗询问用户是否要提供歌词链接
+    const wantLrc = await showCustomConfirm("导入歌词", `要为《${name}》提供一个歌词文件 (.lrc) 的URL吗？`);
+    let lrcUrl = ""; // 默认歌词链接为空
+
+    // 2. 如果用户点击了“确定”
+    if (wantLrc) {
+        // 就再弹出一个输入框让用户粘贴URL
+        const inputLrcUrl = await showCustomPrompt("歌词URL", "请输入 .lrc 歌词文件的网络链接", "", "url");
+        if (inputLrcUrl) {
+            lrcUrl = inputLrcUrl; // 如果用户输入了，就保存这个URL
+        }
+    }
+    // ▲▲▲【修改结束】▲▲▲
+
+    musicState.playlist.push({ 
+        name, 
+        artist, 
+        src: url, 
+        isLocal: false,
+        lrcUrl: lrcUrl, // 3. 把获取到的歌词URL也保存到歌曲信息里
+        lrcContent: ""  // 同时确保lrcContent是空的，以便后续加载
+    });
+
+    await saveGlobalPlaylist();
+    updatePlaylistUI();
+// 【这是新代码】
+if(musicState.currentIndex === -1) {
+    // 【核心修改】调用 loadSong 来准备好第一首歌
+    loadSong(musicState.playlist.length - 1);
+}
+}
+
 
 async function addSongFromLocal(event) {
     const files = event.target.files;
@@ -12312,10 +12389,11 @@ async function addSongFromLocal(event) {
     
     await saveGlobalPlaylist();
     updatePlaylistUI();
-    if (musicState.currentIndex === -1 && musicState.playlist.length > 0) {
-        musicState.currentIndex = 0;
-        updatePlayerUI();
-    }
+// 【这是新代码】
+if (musicState.currentIndex === -1 && musicState.playlist.length > 0) {
+    // 【核心修改】同样，调用 loadSong 来准备好第一首歌
+    loadSong(0);
+}
     event.target.value = null;
 }
 
@@ -12643,9 +12721,9 @@ function runBackgroundSimulationTick() {
 
     // 【核心改造】定义不同频率对应的行动概率
     const frequencyProbabilities = {
-        low: 0.1,    // 低频: 每次检测有 10% 的概率行动
-        medium: 0.25,  // 中频: 每次检测有 25% 的概率行动
-        high: 0.5,   // 高频: 每次检测有 50% 的概率行动
+        low: 0.3,    // 低频: 每次检测有 30% 的概率行动
+        medium: 0.5,  // 中频: 每次检测有 50% 的概率行动
+        high: 0.8,   // 高频: 每次检测有 80% 的概率行动
     };
 
     const config = state.globalSettings.backgroundActivityConfig || {};
