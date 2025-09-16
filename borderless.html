@@ -2279,79 +2279,95 @@ body {
     100% { box-shadow: 0 0 0 0 rgba(76, 217, 100, 0); }
 }
 
-/* --- 视频通话界面 --- */
-/* ▼▼▼ 请用这一整块【最终修正版】的代码，替换所有旧的 video-call 相关CSS ▼▼▼ */
+/* ▼▼▼ 请用这一整块【最终结构重写版】的代码，替换所有旧的 video-call 相关CSS ▼▼▼ */
 
 /* 1. 通话屏幕总容器 (保持不变) */
 #video-call-screen {
     background-color: #1c1c1e;
     color: white;
-    display: flex;
+    display: flex; /* ★ 核心：它依然是flex容器 */
     flex-direction: column;
     overflow: hidden;
 }
 
 /* 2. 顶部栏和底部控制栏 (保持不变) */
-.video-call-top-bar {
+.video-call-top-bar, .video-call-controls {
     position: absolute;
-    top: 0; left: 0; width: 100%;
-    padding: 15px 20px;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    box-sizing: border-box;
+    pointer-events: none; /* 让它们不影响下方内容的点击 */
+}
+.video-call-top-bar {
+    top: 0;
+    padding: 15px 20px 30px; /* 增加底部padding */
     padding-top: 50px;
     background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
-    z-index: 10;
     text-align: center;
-    box-sizing: border-box;
-    pointer-events: none;
-}
-#call-timer {
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: 1px;
 }
 .video-call-controls {
-    position: absolute;
-    bottom: 0; left: 0; width: 100%;
+    bottom: 0;
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding: 20px;
     padding-bottom: 40px;
     background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-    z-index: 10;
-    box-sizing: border-box;
+    pointer-events: all; /* 控制按钮需要能点击 */
+}
+#call-timer {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 1px;
 }
 
-/* 3. 参与者头像显示区 (保持不变) */
+/* 3. 【核心重构】默认文字通话的总容器 */
+#text-call-interface {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 4. 【核心重构】头像区域 */
 .video-call-avatar-area {
-    flex-grow: 1; 
+    flex-shrink: 0; /* ★ 核心：高度雷打不动，绝不压缩 */
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    padding-top: 80px; /* 确保顶部有足够空间 */
-    box-sizing: border-box;
-    overflow-y: auto; /* ★ 新增：如果头像太多，允许此区域滚动 */
+    padding-top: 100px; /* ★ 核心：与顶部状态栏拉开距离 */
+    padding-bottom: 20px; /* ★ 核心：与下方气泡区拉开距离 */
 }
 
-/* 4. 头像网格容器 (保持不变) */
+/* 5. 【核心重构】气泡区域 */
+#video-call-main {
+    flex-grow: 1; /* ★ 核心：占据所有剩余的垂直空间 */
+    min-height: 0; /* ★ 核心：一个防止flex溢出的重要保险丝 */
+    margin: 0 15px 130px 15px; /* ★ 核心：定义四周边界，底部留足空间给按钮 */
+    overflow-y: auto;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.08); /* 稍微调亮一点背景 */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 6. 头像网格和头像本身样式 (微调) */
 #participant-avatars-grid {
     display: flex;
-    flex-wrap: wrap; 
     justify-content: center;
     align-items: center;
-    gap: 15px; /* ★ 稍微减小头像间距 */
-    max-width: 100%;
+    gap: 20px;
 }
-
-/* 5. 单个参与者的头像容器 (头像缩小) */
 .participant-avatar-wrapper {
-    position: relative;
     text-align: center;
-    flex-shrink: 0;
 }
 .participant-avatar {
-    width: 70px;   /* ★ 从 80px 缩小到 70px */
-    height: 70px;  /* ★ 从 80px 缩小到 70px */
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid rgba(255, 255, 255, 0.2);
@@ -2359,61 +2375,26 @@ body {
 }
 .participant-name {
     margin-top: 8px;
-    font-size: 12px;
+    font-size: 13px;
     color: #ccc;
 }
-
-/* 6. 发言者头像高亮效果 (保持不变) */
 .participant-avatar.speaking {
     border-color: #4cd964;
     box-shadow: 0 0 20px rgba(76, 217, 100, 0.6);
     transform: scale(1.05);
 }
 
-/* 7. 【最终版】对话框区域 */
-#video-call-main {
-    flex-shrink: 0; 
-    height: 30%;   /* ★ 核心修改：高度从35%减小到30% */
-    margin: 15px 15px 130px 15px; /* ★ 核心修改：底部边距从120px增加到130px，创造明显空隙 */
-    overflow-y: auto;
-    padding: 15px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    box-sizing: border-box;
-}
-
-/* 8. 控制按钮样式 (保持不变) */
+/* 7. 控制按钮样式 (保持不变) */
 .control-btn {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    background-repeat: no-repeat;
-    background-position: center;
+    width: 70px; height: 70px; border-radius: 50%; border: none; cursor: pointer;
+    background-repeat: no-repeat; background-position: center;
     transition: transform 0.2s, background-color 0.2s;
+    pointer-events: all;
 }
-.control-btn:active {
-    transform: scale(0.9);
-}
-.control-btn.speak-btn {
-    background-color: rgba(255,255,255,0.2);
-    background-size: 55%;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>');
-}
-.control-btn.hangup-btn {
-    background-color: #ff3b30;
-    background-size: 50%;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 16.5L3 6m18 6l-5.6-5.6a1.2 1.2 0 0 0-1.7 0L3 18.2a1.2 1.2 0 0 0-.3 1.2l1.2 3.6a1.2 1.2 0 0 0 1.2.9h15.6a1.2 1.2 0 0 0 1.2-1.2V7.7a1.2 1.2 0 0 0-.3-1.1z"/></svg>');
-}
-.control-btn.join-btn {
-    background-color: #007bff;
-    background-size: 50%;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="17" y1="11" x2="23" y2="11"></line></svg>');
-}
+.control-btn:active { transform: scale(0.9); }
+.control-btn.speak-btn { background-color: rgba(255,255,255,0.2); background-size: 55%; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>'); }
+.control-btn.hangup-btn { background-color: #ff3b30; background-size: 50%; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 16.5L3 6m18 6l-5.6-5.6a1.2 1.2 0 0 0-1.7 0L3 18.2a1.2 1.2 0 0 0-.3 1.2l1.2 3.6a1.2 1.2 0 0 0 1.2.9h15.6a1.2 1.2 0 0 0 1.2-1.2V7.7a1.2 1.2 0 0 0-.3-1.1z"/></svg>'); }
+.control-btn.join-btn { background-color: #007bff; background-size: 50%; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="17" y1="11" x2="23" y2="11"></line></svg>'); }
 
 /* ▲▲▲ 新CSS替换结束 ▲▲▲ */
 
@@ -5832,6 +5813,144 @@ input:checked + .slider:before {
 .char-freq-badge.medium { background-color: #fd7e14; }
 .char-freq-badge.high { background-color: #dc3545; }
 /* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
+/* ▼▼▼ 把这一整块全新的CSS，粘贴到 <style> 的末尾 ▼▼▼ */
+
+/* === 【全新】视频通话可视化界面样式 === */
+
+/* 1. 可视化界面的总容器，确保它能覆盖整个屏幕 */
+#visual-call-interface {
+    width: 100%;
+    height: 100%;
+    position: relative; /* 让内部元素可以相对于它定位 */
+    overflow: hidden; /* 防止内容溢出 */
+    background-color: #1c1c1e; /* 深色背景 */
+    display: flex; /* 使用flex布局，方便内容排列 */
+    flex-direction: column;
+}
+
+/* 2. 视频背景层，用于放置大小图 */
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* 确保它在最底层 */
+}
+
+/* 3. 大小图的通用容器样式 */
+.video-container {
+    position: absolute;
+    background-color: #000;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out; /* 为切换镜头添加动画 */
+}
+.video-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 保证图片填满容器且不变形 */
+}
+
+/* 4. 大图样式 (默认占满全屏) */
+#video-main-view {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 5. 小图样式 (画中画) */
+#video-pip-view {
+    top: 60px; /* 距离顶部一段距离 */
+    right: 15px;
+    width: 100px; /* 小窗宽度 */
+    height: 178px; /* 小窗高度 (保持竖屏比例) */
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    cursor: pointer; /* 提示用户可以点击 */
+}
+
+/* 6. 聊天气泡区域 (覆盖在视频之上) */
+#video-call-messages-visual {
+    position: relative;
+    z-index: 5; /* 层级比视频高 */
+    flex-grow: 1; /* 占据除了顶部和底部栏之外的所有空间 */
+    padding: 15px;
+    overflow-y: auto; /* 内容多了可以滚动 */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* 关键：为了不让滚动条影响美观，把它隐藏掉 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+}
+#video-call-messages-visual::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
+/* ▼▼▼ 用这【一小块】代码，替换掉旧的气泡样式，实现【无模糊】效果 ▼▼▼ */
+
+/* 7. 【无模糊】高清透明聊天气泡 */
+.visual-call-bubble {
+    padding: 8px 12px;
+    border-radius: 18px;
+    max-width: 80%;
+    line-height: 1.5;
+    word-break: break-word;
+    color: white;
+
+    /* ★ 核心修改：彻底移除 backdrop-filter (模糊) 效果 */
+
+    /* ★ 核心修改：提供一个简单的半透明黑色背景，以衬托文字 */
+    background-color: rgba(0, 0, 0, 0.3); /* 这是一个关键值，可以在 0.2 (更透) 到 0.4 (更深) 之间微调 */
+
+    /* ★ 核心修改：使用更清晰的边框来定义气泡轮廓 */
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    /* ★ 核心修改：强化文字阴影，确保在任何清晰背景下都绝对可读 */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.visual-call-bubble.user {
+    align-self: flex-end;
+    /* ★ 核心修改：用户气泡也使用无模糊的半透明背景 */
+    background-color: rgba(40, 160, 70, 0.3); /* 使用一个更深的绿色来保证对比度 */
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ▲▲▲ 替换结束 ▲▲▲ */
+
+
+
+.visual-call-bubble.ai {
+    align-self: flex-start; /* AI的发言靠左 */
+}
+
+/* 8. 顶部和底部栏的层级要最高 */
+#visual-call-interface .video-call-top-bar,
+#visual-call-interface .video-call-controls {
+    z-index: 10;
+}
+
+/* 9. 新增的控制按钮图标 (使用SVG) */
+.control-btn.reroll-btn {
+    background-color: rgba(255,255,255,0.2);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>');
+    background-size: 50%;
+}
+.control-btn.switch-camera-btn {
+    background-color: rgba(255,255,255,0.2);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>');
+    background-size: 50%;
+}
+
+/* 10. 挂断按钮需要一个新ID来区分 */
+#hang-up-btn-visual {
+    /* 样式继承自 .hangup-btn，无需额外添加 */
+}
+
+/* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
 
 /* ▲▲▲ 样式添加结束 ▲▲▲ */
 
@@ -6812,33 +6931,76 @@ input:checked + .slider:before {
 <!-- ▲▲▲ 新增结束 ▲▲▲ -->
 
 <!-- ▼▼▼ 请用这段【全新群聊兼容结构】的代码，完整替换你旧的 #video-call-screen ▼▼▼ -->
+<!-- ▼▼▼ 用下面这【一整块】全新的代码，替换掉你文件中旧的 #video-call-screen 及其所有内容 ▼▼▼ -->
 <div id="video-call-screen" class="screen">
-    <!-- 1. 顶部栏 (保持不变) -->
-    <div class="video-call-top-bar">
-        <span id="call-timer">00:00</span>
-    </div>
-    
-    <!-- 2. 【升级】参与者头像网格区域 -->
-    <div class="video-call-avatar-area">
-        <div id="participant-avatars-grid">
-            <!-- JS会在这里动态生成头像 -->
+    <!-- 这个 screen 同时为两种模式服务 -->
+
+    <!-- ======================================================= -->
+    <!-- 模式一：全新的【可视化】视频通话界面 -->
+    <!-- ======================================================= -->
+    <div id="visual-call-interface" style="display: none;"> <!-- 默认隐藏 -->
+        <!-- 1. 视频背景层 (大图和小图都在这里) -->
+        <div class="video-background">
+            <!-- 大图容器 -->
+            <div id="video-main-view" class="video-container">
+                <img src="" alt="主视频画面">
+            </div>
+            <!-- 小图容器 (画中画) -->
+            <div id="video-pip-view" class="video-container pip">
+                <img src="" alt="小窗视频画面">
+            </div>
         </div>
+
+        <!-- 2. 顶部状态栏 -->
+        <div class="video-call-top-bar">
+            <span id="visual-call-timer">00:00</span>
+        </div>
+
+        <!-- 3. 聊天气泡显示区域 -->
+        <div id="video-call-messages-visual" class="video-call-main">
+            <!-- 聊天气泡会由JS动态生成在这里 -->
+        </div>
+<!-- ▼▼▼ 用下面这【一整块】代码，替换掉 id="visual-call-interface" 里面那个旧的 video-call-controls 的 div ▼▼▼ -->
+<div class="video-call-controls">
+    <!-- 重-roll按钮 -->
+    <button id="reroll-call-btn" class="control-btn reroll-btn" title="重新生成"></button>
+    <!-- 【核心新增】发言按钮 -->
+    <button id="user-speak-btn-visual" class="control-btn speak-btn" title="发言"></button>
+    <!-- 切换镜头按钮 -->
+    <button id="switch-camera-btn" class="control-btn switch-camera-btn" title="切换镜头"></button>
+    <!-- 挂断按钮 -->
+    <button id="hang-up-btn-visual" class="control-btn hangup-btn"></button>
+</div>
+<!-- ▲▲▲ 替换结束 ▲▲▲ -->
+
     </div>
 
-    <!-- 3. 对话框区域 (保持不变) -->
-    <div id="video-call-main" class="video-call-main">
-        <!-- 对话内容会动态生成在这里 -->
-    </div>
-    
-    <!-- 4. 【升级】底部控制栏，现在包含一个“加入”按钮 -->
-    <div class="video-call-controls">
-        <button id="user-speak-btn" class="control-btn speak-btn"></button>
-        <button id="hang-up-btn" class="control-btn hangup-btn"></button>
-        <!-- 这个按钮默认隐藏，只在用户“旁观”时显示 -->
-        <button id="join-call-btn" class="control-btn join-btn" style="display: none;"></button>
+    <!-- ======================================================= -->
+    <!-- 模式二：你原来的【纯文字】语音通话界面 (我们把它保留下来作为默认选项) -->
+    <!-- ======================================================= -->
+    <div id="text-call-interface" style="display: none;"> <!-- 默认隐藏 -->
+        <div class="video-call-top-bar">
+            <span id="call-timer">00:00</span>
+        </div>
+        <div class="video-call-avatar-area">
+            <div id="participant-avatars-grid">
+                <!-- JS会在这里动态生成头像 -->
+            </div>
+        </div>
+        <div id="video-call-main" class="video-call-main">
+            <!-- 对话内容会动态生成在这里 -->
+        </div>
+        <div class="video-call-controls">
+            <!-- 【新增】为旧模式也加上重roll按钮 -->
+            <button id="reroll-call-btn-text" class="control-btn reroll-btn" title="重新生成"></button>
+            <button id="user-speak-btn" class="control-btn speak-btn"></button>
+            <button id="hang-up-btn" class="control-btn hangup-btn"></button>
+            <button id="join-call-btn" class="control-btn join-btn" style="display: none;"></button>
+        </div>
     </div>
 </div>
 <!-- ▲▲▲ 替换结束 ▲▲▲ -->
+
 
 <!-- ▼▼▼ 【全新添加】正在呼叫界面 ▼▼▼ -->
 <div id="outgoing-call-screen" class="screen">
@@ -6958,7 +7120,44 @@ input:checked + .slider:before {
     <button id="manage-npcs-btn" class="form-button form-button-secondary" style="width: 100%; margin-top: 5px;">管理NPC库</button>
 </div>
 <!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
-<div class="form-group" id="ai-avatar-group"><label>对方头像</label><div class="avatar-upload"><img id="ai-avatar-preview"><button onclick="document.getElementById('ai-avatar-input').click()">上传对方头像</button><button id="manage-ai-avatar-library-btn">管理头像库</button>
+<div class="form-group" id="ai-avatar-group"><label>对方头像</label>
+  <!-- ▼▼▼ 把下面这【一整块】代码，粘贴到 id="ai-avatar-group" 的那个 div 之后 ▼▼▼ -->
+<div class="form-group" id="video-call-settings-group">
+    <hr style="opacity: 0.2; margin: 20px 0;">
+    <label>视频通话界面设置</label>
+    
+    <!-- 1. 功能开关 -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <span>启用可视化界面</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="visual-video-call-switch">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <!-- 2. 图片上传区 (默认隐藏) -->
+    <div id="video-call-image-uploads" style="display: none;">
+        <div class="form-group">
+            <label>对方的视频画面</label>
+            <div class="avatar-upload">
+                <img id="char-video-image-preview" style="border-radius: 8px; width: 80px; height: 142px;">
+                <button onclick="document.getElementById('char-video-image-input').click()">上传图片</button>
+                <input type="file" id="char-video-image-input" accept="image/*" hidden>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>我的视频画面</label>
+            <div class="avatar-upload">
+                <img id="user-video-image-preview" style="border-radius: 8px; width: 80px; height: 142px;">
+                <button onclick="document.getElementById('user-video-image-input').click()">上传图片</button>
+                <input type="file" id="user-video-image-input" accept="image/*" hidden>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
+
+  <div class="avatar-upload"><img id="ai-avatar-preview"><button onclick="document.getElementById('ai-avatar-input').click()">上传对方头像</button><button id="manage-ai-avatar-library-btn">管理头像库</button>
 <button class="change-frame-btn" data-type="ai">更换头像框</button> <!-- ← 加回这一行 -->
 <input type="file" id="ai-avatar-input" accept="image/*"></div></div><div class="form-group" id="my-persona-group"><label for="my-persona">我的人设 (My Persona)</label><textarea id="my-persona" rows="3"></textarea></div><div class="form-group" id="my-avatar-group"><label>我的头像</label><div class="avatar-upload"><img id="my-avatar-preview"><button onclick="document.getElementById('my-avatar-input').click()">上传我的头像</button>
 <button class="change-frame-btn" data-type="my">更换头像框</button> <!-- ← 加回这一行 -->
@@ -14053,43 +14252,83 @@ async function handleInitiateCall() {
 }
 
 
+// ▼▼▼ 用这个【全新的函数】，完整替换掉你旧的 startVideoCall 函数 ▼▼▼
 function startVideoCall() {
     const chat = state.chats[videoCallState.activeChatId];
     if (!chat) return;
 
-    videoCallState.isActive = true;
-    videoCallState.isAwaitingResponse = false;
-    videoCallState.startTime = Date.now();
-    videoCallState.callHistory = []; // 【新增】清空上一次通话的历史
+    // 1. 【核心判断】检查是否启用了可视化界面
+    if (chat.settings.visualVideoCallEnabled) {
+        // --- 启动【新】的可视化界面 ---
+        videoCallState.isActive = true;
+        videoCallState.isAwaitingResponse = false;
+        videoCallState.startTime = Date.now();
+        videoCallState.callHistory = [];
 
-    // --- 【核心新增：抓取通话前上下文】---
-    const preCallHistory = chat.history.slice(-10); // 取最后10条作为上下文
-    videoCallState.preCallContext = preCallHistory.map(msg => {
-        const sender = msg.role === 'user' ? (chat.settings.myNickname || '我') : (msg.senderName || chat.name);
-        return `${sender}: ${String(msg.content).substring(0, 50)}...`;
-    }).join('\n');
-    // --- 新增结束 ---
+        const visualInterface = document.getElementById('visual-call-interface');
+        const textInterface = document.getElementById('text-call-interface');
+        
+        // 显示新界面，隐藏旧界面
+        visualInterface.style.display = 'flex';
+        textInterface.style.display = 'none';
 
-    updateParticipantAvatars(); 
-    
-    document.getElementById('video-call-main').innerHTML = `<em>${videoCallState.isGroupCall ? '群聊已建立...' : '正在接通...'}</em>`;
-    showScreen('video-call-screen');
+        // 加载图片
+        document.querySelector('#video-main-view img').src = chat.settings.charVideoImage || defaultAvatar;
+        document.querySelector('#video-pip-view img').src = chat.settings.userVideoImage || defaultAvatar;
+        
+        // 清空旧的聊天气泡
+        document.getElementById('video-call-messages-visual').innerHTML = `<em>正在接通...</em>`;
+        showScreen('video-call-screen');
 
-    document.getElementById('user-speak-btn').style.display = videoCallState.isUserParticipating ? 'block' : 'none';
-    document.getElementById('join-call-btn').style.display = videoCallState.isUserParticipating ? 'none' : 'block';
+        // 启动计时器
+        if (callTimerInterval) clearInterval(callTimerInterval);
+        callTimerInterval = setInterval(updateCallTimer, 1000);
+        updateCallTimer(); // 立即更新一次
 
-    if (callTimerInterval) clearInterval(callTimerInterval);
-    callTimerInterval = setInterval(updateCallTimer, 1000);
-    updateCallTimer();
+        // 触发AI在通话中的第一句话
+        triggerAiInCallAction();
 
-    triggerAiInCallAction();
+    } else {
+        // --- 启动【旧】的纯文字界面 (这里的代码就是你原来的逻辑) ---
+        videoCallState.isActive = true;
+        videoCallState.isAwaitingResponse = false;
+        videoCallState.startTime = Date.now();
+        videoCallState.callHistory = [];
+
+        const visualInterface = document.getElementById('visual-call-interface');
+        const textInterface = document.getElementById('text-call-interface');
+
+        // 显示旧界面，隐藏新界面
+        visualInterface.style.display = 'none';
+        textInterface.style.display = 'flex'; // 旧界面用flex
+
+        updateParticipantAvatars(); 
+        
+        document.getElementById('video-call-main').innerHTML = `<em>${videoCallState.isGroupCall ? '群聊已建立...' : '正在接通...'}</em>`;
+        showScreen('video-call-screen');
+
+        document.getElementById('user-speak-btn').style.display = videoCallState.isUserParticipating ? 'block' : 'none';
+        document.getElementById('join-call-btn').style.display = videoCallState.isUserParticipating ? 'none' : 'block';
+
+        if (callTimerInterval) clearInterval(callTimerInterval);
+        callTimerInterval = setInterval(updateCallTimer, 1000);
+        updateCallTimer();
+
+        triggerAiInCallAction();
+    }
 }
+// ▲▲▲ 替换结束 ▲▲▲
+
 
 /**
  * 【核心】结束视频通话
  */
 // ▼▼▼ 用这整块代码替换旧的 endVideoCall 函数 ▼▼▼
 async function endVideoCall() {
+  // ▼▼▼ 在 endVideoCall 函数的【开头】添加这行代码 ▼▼▼
+document.getElementById('visual-call-interface').style.display = 'none';
+// ▲▲▲ 添加结束 ▲▲▲
+
     if (!videoCallState.isActive) return;
 
     const duration = Math.floor((Date.now() - videoCallState.startTime) / 1000);
@@ -14229,15 +14468,22 @@ function handleUserJoinCall() {
 
 
 /**
- * 更新通话计时器显示 (保持不变)
+ * 更新通话计时器显示 
  */
+// ▼▼▼ 用这个【新版本】替换旧的 updateCallTimer 函数 ▼▼▼
 function updateCallTimer() {
     if (!videoCallState.isActive) return;
     const elapsed = Math.floor((Date.now() - videoCallState.startTime) / 1000);
     const minutes = Math.floor(elapsed / 60);
     const seconds = elapsed % 60;
-    document.getElementById('call-timer').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
+    // 同时更新两个界面的计时器
+    document.getElementById('call-timer').textContent = timeString;
+    document.getElementById('visual-call-timer').textContent = timeString;
 }
+// ▲▲▲ 替换结束 ▲▲▲
+
 
 // ▼▼▼ 用这个完整函数替换旧的 showIncomingCallModal ▼▼▼
 function showIncomingCallModal(chatId) { // <--- 在括号里添加 chatId
@@ -14271,15 +14517,20 @@ function hideIncomingCallModal() {
     stopRingtone(); // <-- 在这里添加这一行
 }
 
+// ▼▼▼ 用这个【全新的、已添加严格规则的函数】，完整替换掉你旧的 triggerAiInCallAction 函数 ▼▼▼
 async function triggerAiInCallAction(userInput = null) {
     if (!videoCallState.isActive) return;
 
     const chat = state.chats[videoCallState.activeChatId];
     const { proxyUrl, apiKey, model } = state.apiConfig;
-    const callFeed = document.getElementById('video-call-main');
+    
+    const isVisualMode = chat.settings.visualVideoCallEnabled;
+    const callFeed = isVisualMode 
+        ? document.getElementById('video-call-messages-visual') 
+        : document.getElementById('video-call-main');
+
     const userNickname = chat.settings.myNickname || '我';
 
-    // ▼▼▼ 在这里添加世界书读取逻辑 ▼▼▼
     let worldBookContent = '';
     if (chat.settings.linkedWorldBookIds && chat.settings.linkedWorldBookIds.length > 0) {
         const linkedContents = chat.settings.linkedWorldBookIds.map(bookId => {
@@ -14290,19 +14541,24 @@ async function triggerAiInCallAction(userInput = null) {
             worldBookContent = `\n\n# 核心世界观设定 (你必须严格遵守)\n${linkedContents}\n`;
         }
     }
-    // ▲▲▲ 添加结束 ▲▲▲
 
-    // 1. 如果用户有输入，先渲染并存入通话历史
     if (userInput && videoCallState.isUserParticipating) {
-        const userBubble = document.createElement('div');
-        userBubble.className = 'call-message-bubble user-speech';
-        userBubble.textContent = userInput;
-        callFeed.appendChild(userBubble);
+        if (isVisualMode) {
+            const userBubble = document.createElement('div');
+            userBubble.className = 'visual-call-bubble user';
+            userBubble.textContent = userInput;
+            callFeed.appendChild(userBubble);
+        } else {
+            const userBubble = document.createElement('div');
+            userBubble.className = 'call-message-bubble user-speech';
+            userBubble.textContent = userInput;
+            callFeed.appendChild(userBubble);
+        }
         callFeed.scrollTop = callFeed.scrollHeight;
         videoCallState.callHistory.push({ role: 'user', content: userInput });
     }
 
-    // 2. 构建全新的、包含完整上下文的 System Prompt
+// ▼▼▼ 用下面这【一整块 if/else】，替换掉旧的 inCallPrompt 定义 ▼▼▼
     let inCallPrompt;
     if (videoCallState.isGroupCall) {
         const participantNames = videoCallState.participants.map(p => p.name);
@@ -14313,17 +14569,18 @@ async function triggerAiInCallAction(userInput = null) {
 # 你的任务
 你是一个群聊视频通话的导演。你的任务是扮演所有【除了用户以外】的AI角色，并以【第三人称旁观视角】来描述他们在通话中的所有动作和语言。
 # 核心规则
-1.  **【【【身份铁律】】】**: 用户的身份是【${userNickname}】。你【绝对不能】生成 \`name\` 字段为 **"${userNickname}"** 的发言。
-2.  **【【【视角铁律】】】**: 你的回复【绝对不能】使用第一人称“我”。
-3.  **格式**: 你的回复【必须】是一个JSON数组，每个对象代表一个角色的发言，格式为：\`{"name": "角色名", "speech": "*他笑了笑* 大家好啊！"}\`。
-4.  **角色扮演**: 严格遵守每个角色的设定。
+1.  **【【【格式铁律】】】**: 你的回复【必须】是一个JSON数组，每个对象代表一个角色的发言，格式为：\`{"name": "角色名", "speech": "*他笑了笑* 大家好啊！"}\`。
+2.  **【【【内容铁律】】】**: 你的回复【必须是纯文本】。你【绝对禁止】生成任何URL链接、Markdown图片语法(\`![alt](url)\`)、或任何形式的文件路径。
+3.  **身份铁律**: 用户的身份是【${userNickname}】。你【绝对不能】生成 \`name\` 字段为 **"${userNickname}"** 的发言。
+4.  **视角铁律**: 你的回复【绝对不能】使用第一人称“我”。
+5.  **角色扮演**: 严格遵守每个角色的设定。
 # 当前情景
 你们正在一个群视频通话中。
 **通话前的聊天摘要**:
 ${videoCallState.preCallContext}
 **当前参与者**: ${participantNames.join('、 ')}。
 **通话刚刚开始...**
-${worldBookContent} // <-- 【核心】注入世界书
+${worldBookContent}
 现在，请根据【通话前摘要】和下面的【通话实时记录】，继续进行对话。
 `;
     } else { 
@@ -14334,80 +14591,84 @@ ${worldBookContent} // <-- 【核心】注入世界书
 # 你的任务
 你现在是一个场景描述引擎。你的任务是扮演 ${chat.name} (${chat.settings.aiPersona})，并以【第三人称旁观视角】来描述TA在视频通话中的所有动作和语言。
 # 核心规则
-1.  **【【【视角铁律】】】**: 你的回复【绝对不能】使用第一人称“我”。必须使用第三人称，如“他”、“她”、或直接使用角色名“${chat.name}”。
-2.  **格式**: 你的回复【必须】是一段描述性的文本。
+1.  **【【【内容铁律】】】**: 你的回复【必须是纯文本】。你【绝对禁止】返回任何JSON格式的指令、URL链接、Markdown图片语法(\`![alt](url)\`)、或任何形式的文件路径。
+2.  **视角铁律**: 你的回复【绝对不能】使用第一人称“我”。必须使用第三人称，如“他”、“她”、或直接使用角色名“${chat.name}”。
 # 当前情景
 你正在和用户（${userNickname}，人设: ${chat.settings.myPersona}）进行视频通话。
 **${openingContext}**
 **通话前的聊天摘要 (这是你们通话的原因，至关重要！)**:
 ${videoCallState.preCallContext}
+${worldBookContent}
 现在，请根据【通话前摘要】和下面的【通话实时记录】，继续进行对话。
 `;
     }
-    
-    // 3. 构建发送给API的 messages 数组
+// ▲▲▲ 替换结束 ▲▲▲
     const messagesForApi = [
         { role: 'system', content: inCallPrompt },
-        // 将已有的通话历史加进去
         ...videoCallState.callHistory.map(h => ({ role: h.role, content: h.content }))
     ];
-
-    // --- 【核心修复：确保第一次调用时有内容】---
     if (videoCallState.callHistory.length === 0) {
         const firstLineTrigger = videoCallState.initiator === 'user' ? `*你按下了接听键...*` : `*对方按下了接听键...*`;
         messagesForApi.push({ role: 'user', content: firstLineTrigger });
     }
-    // --- 修复结束 ---
     
-        try {
-            let  isGemini = proxyUrl === GEMINI_API_URL;
-            let geminiConfig = toGeminiRequestData(model,apiKey,inCallPrompt, messagesForApi,isGemini)
-            const response = isGemini ? await fetch(geminiConfig.url, geminiConfig.data) : await fetch(`${proxyUrl}/v1/chat/completions`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`},
-                body: JSON.stringify({
-                    model: model, messages: messagesForApi, temperature: 0.8
-                })
-            });
-            if (!response.ok) throw new Error((await response.json()).error.message);
+    try {
+        let isGemini = proxyUrl === GEMINI_API_URL;
+        let geminiConfig = toGeminiRequestData(model, apiKey, inCallPrompt, messagesForApi, isGemini);
+        const response = isGemini ? await fetch(geminiConfig.url, geminiConfig.data) : await fetch(`${proxyUrl}/v1/chat/completions`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`},
+            body: JSON.stringify({ model: model, messages: messagesForApi, temperature: 0.8 })
+        });
+        if (!response.ok) throw new Error((await response.json()).error.message);
 
-            const data = await response.json();
-            const aiResponse = isGemini? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
+        const data = await response.json();
+        const aiResponse = isGemini ? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
+        // ▼▼▼ 在获取到 aiResponse 的下一行，插入这行代码 ▼▼▼
+const sanitizedResponse = aiResponse.replace(/!\[.*?\]\(.*?\)|https?:\/\/\S+/gi, '').trim();
+// ▲▲▲ 插入结束 ▲▲▲
 
-            const connectingElement = callFeed.querySelector('em');
-            if (connectingElement) connectingElement.remove();
 
-        // 4. 处理AI返回的内容，并将其存入通话历史
-        if (videoCallState.isGroupCall) {
-            const speechArray = parseAiResponse(aiResponse);
-            speechArray.forEach(turn => {
-                if (!turn.name || turn.name === userNickname || !turn.speech) return;
+        const connectingElement = callFeed.querySelector('em');
+        if (connectingElement) connectingElement.remove();
+
+        if (isVisualMode) {
+            const aiBubble = document.createElement('div');
+            aiBubble.className = 'visual-call-bubble ai';
+aiBubble.textContent = sanitizedResponse;
+callFeed.appendChild(aiBubble);
+videoCallState.callHistory.push({ role: 'assistant', content: sanitizedResponse });
+        } else {
+            if (videoCallState.isGroupCall) {
+                const speechArray = parseAiResponse(sanitizedResponse); 
+                speechArray.forEach(turn => {
+                    if (!turn.name || turn.name === userNickname || !turn.speech) return;
+                    const aiBubble = document.createElement('div');
+                    aiBubble.className = 'call-message-bubble ai-speech';
+                    aiBubble.innerHTML = `<strong>${turn.name}:</strong> ${turn.speech}`;
+                    callFeed.appendChild(aiBubble);
+                    videoCallState.callHistory.push({ role: 'assistant', content: `${turn.name}: ${turn.speech}` });
+                    
+                    const speaker = videoCallState.participants.find(p => p.name === turn.name);
+                    if (speaker) {
+                        const speakingAvatar = document.querySelector(`.participant-avatar-wrapper[data-participant-id="${speaker.id}"] .participant-avatar`);
+                        if(speakingAvatar) {
+                            speakingAvatar.classList.add('speaking');
+                            setTimeout(() => speakingAvatar.classList.remove('speaking'), 2000);
+                        }
+                    }
+                });
+            } else {
                 const aiBubble = document.createElement('div');
                 aiBubble.className = 'call-message-bubble ai-speech';
-                aiBubble.innerHTML = `<strong>${turn.name}:</strong> ${turn.speech}`;
-                callFeed.appendChild(aiBubble);
-                videoCallState.callHistory.push({ role: 'assistant', content: `${turn.name}: ${turn.speech}` });
-                
-                const speaker = videoCallState.participants.find(p => p.name === turn.name);
-                if (speaker) {
-                    const speakingAvatar = document.querySelector(`.participant-avatar-wrapper[data-participant-id="${speaker.id}"] .participant-avatar`);
-                    if(speakingAvatar) {
-                        speakingAvatar.classList.add('speaking');
-                        setTimeout(() => speakingAvatar.classList.remove('speaking'), 2000);
-                    }
+                aiBubble.textContent = sanitizedResponse;
+callFeed.appendChild(aiBubble);
+videoCallState.callHistory.push({ role: 'assistant', content: sanitizedResponse });
+                const speakingAvatar = document.querySelector(`.participant-avatar-wrapper .participant-avatar`);
+                if(speakingAvatar) {
+                    speakingAvatar.classList.add('speaking');
+                    setTimeout(() => speakingAvatar.classList.remove('speaking'), 2000);
                 }
-            });
-        } else {
-            const aiBubble = document.createElement('div');
-            aiBubble.className = 'call-message-bubble ai-speech';
-            aiBubble.textContent = aiResponse;
-            callFeed.appendChild(aiBubble);
-            videoCallState.callHistory.push({ role: 'assistant', content: aiResponse });
-
-            const speakingAvatar = document.querySelector(`.participant-avatar-wrapper .participant-avatar`);
-            if(speakingAvatar) {
-                speakingAvatar.classList.add('speaking');
-                setTimeout(() => speakingAvatar.classList.remove('speaking'), 2000);
             }
         }
         
@@ -14415,14 +14676,22 @@ ${videoCallState.preCallContext}
 
     } catch (error) {
         const errorBubble = document.createElement('div');
-        errorBubble.className = 'call-message-bubble ai-speech';
         errorBubble.style.color = '#ff8a80';
         errorBubble.textContent = `[ERROR: ${error.message}]`;
+        
+        if (isVisualMode) {
+            errorBubble.className = 'visual-call-bubble ai';
+        } else {
+            errorBubble.className = 'call-message-bubble ai-speech';
+        }
+        
         callFeed.appendChild(errorBubble);
         callFeed.scrollTop = callFeed.scrollHeight;
         videoCallState.callHistory.push({ role: 'assistant', content: `[ERROR: ${error.message}]` });
     }
 }
+// ▲▲▲ 替换结束 ▲▲▲
+
 
 // ▼▼▼ 将这个【全新函数】粘贴到JS功能函数定义区 ▼▼▼
 function toggleCallButtons(isGroup) {
@@ -18928,6 +19197,70 @@ function parseDurationToMinutes(durationString) {
     // 默认单位是分钟
     return num;
 }
+// ▼▼▼ 把这两个【新函数】粘贴到你的JS功能函数定义区 ▼▼▼
+
+/**
+ * 【全新】切换视频通话的大小窗口画面
+ */
+function switchVideoViews() {
+    const mainView = document.getElementById('video-main-view');
+    const pipView = document.getElementById('video-pip-view');
+    
+    // 交换两张图片的 src
+    const mainImg = mainView.querySelector('img');
+    const pipImg = pipView.querySelector('img');
+    const tempSrc = mainImg.src;
+    mainImg.src = pipImg.src;
+    pipImg.src = tempSrc;
+}
+
+// ▼▼▼ 用这个【全新的、逻辑正确的函数】，完整替换掉你旧的 handleVideoCallReroll 函数 ▼▼▼
+/**
+ * 【全新】处理视频通话中的“重roll”请求
+ */
+async function handleVideoCallReroll() {
+    if (!videoCallState.isActive) return;
+
+    // 1. 找到用户最后一次说的话的索引
+    const lastUserSpeechIndex = videoCallState.callHistory.findLastIndex(h => h.role === 'user');
+    
+    // 2. 从通话历史中，删除掉那之后的所有AI回复
+    //    如果用户一句话没说（lastUserSpeechIndex 是 -1），就删除所有AI的回复
+    if (lastUserSpeechIndex > -1) {
+        videoCallState.callHistory.splice(lastUserSpeechIndex + 1);
+    } else {
+        // 如果用户还没说过话，就清空所有历史，让AI重说第一句话
+        videoCallState.callHistory = [];
+    }
+    
+    // 3. 【核心】重新渲染通话界面，让旧的AI气泡从屏幕上消失
+    //    我们需要根据当前是哪种模式，来清空对应的聊天容器
+    const chat = state.chats[videoCallState.activeChatId];
+    const isVisualMode = chat.settings.visualVideoCallEnabled;
+    const callFeed = isVisualMode 
+        ? document.getElementById('video-call-messages-visual') 
+        : document.getElementById('video-call-main');
+    
+    callFeed.innerHTML = ''; // 清空容器
+    
+    // 重新渲染删除后的历史记录
+    videoCallState.callHistory.forEach(msg => {
+        let bubble;
+        if (isVisualMode) {
+            bubble = document.createElement('div');
+            bubble.className = `visual-call-bubble ${msg.role === 'user' ? 'user' : 'ai'}`;
+        } else {
+            bubble = document.createElement('div');
+            bubble.className = `call-message-bubble ${msg.role === 'user' ? 'user-speech' : 'ai-speech'}`;
+        }
+        bubble.textContent = msg.content;
+        callFeed.appendChild(bubble);
+    });
+    
+    // 4. 重新触发AI响应，它会根据删减后的历史记录生成新内容
+    await triggerAiInCallAction();
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
 
         // ===================================================================
         // 4. 初始化函数 init()
@@ -19312,6 +19645,57 @@ document.getElementById('chat-settings-btn').addEventListener('click', async () 
     const isGroup = chat.isGroup;
 
     // --- 统一显示/隐藏控件 ---
+    // ▼▼▼ 在 chat-settings-btn 的 click 事件中，粘贴这段代码 ▼▼▼
+const videoCallSettingsGroup = document.getElementById('video-call-settings-group');
+const visualCallSwitch = document.getElementById('visual-video-call-switch');
+const imageUploadsDiv = document.getElementById('video-call-image-uploads');
+
+if (isGroup) {
+    videoCallSettingsGroup.style.display = 'none'; // 群聊不支持，隐藏整个设置区
+} else {
+    videoCallSettingsGroup.style.display = 'block'; // 单聊显示
+    
+    // 加载当前设置
+    visualCallSwitch.checked = chat.settings.visualVideoCallEnabled || false;
+    imageUploadsDiv.style.display = visualCallSwitch.checked ? 'block' : 'none';
+    document.getElementById('char-video-image-preview').src = chat.settings.charVideoImage || 'https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png';
+    document.getElementById('user-video-image-preview').src = chat.settings.userVideoImage || 'https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png';
+
+    // 为开关添加实时交互
+    visualCallSwitch.onchange = () => {
+        imageUploadsDiv.style.display = visualCallSwitch.checked ? 'block' : 'none';
+    };
+}
+// ▲▲▲ 粘贴结束 ▲▲▲
+// ▼▼▼ 在 init() 的事件监听器区域，粘贴这整块新代码 ▼▼▼
+
+// ▼▼▼ 用这【一整块】代码，替换掉旧的 “全新视频通话功能事件绑定” 注释块 ▼▼▼
+
+// --- 全新视频通话功能事件绑定 (V2 修正版) ---
+
+// 绑定新界面的挂断按钮
+document.getElementById('hang-up-btn-visual').addEventListener('click', endVideoCall);
+
+// 【新增】绑定新界面的发言按钮
+document.getElementById('user-speak-btn-visual').addEventListener('click', async () => {
+    if (!videoCallState.isActive) return;
+    const userInput = await showCustomPrompt('你说', '请输入你想说的话...');
+    if (userInput && userInput.trim()) {
+        triggerAiInCallAction(userInput.trim());
+    }
+});
+
+// 绑定切换镜头按钮 (也是小窗本身)
+document.getElementById('switch-camera-btn').addEventListener('click', switchVideoViews);
+document.getElementById('video-pip-view').addEventListener('click', switchVideoViews);
+
+// 【修正】绑定两个界面的重roll按钮
+document.getElementById('reroll-call-btn').addEventListener('click', handleVideoCallReroll);
+document.getElementById('reroll-call-btn-text').addEventListener('click', handleVideoCallReroll);
+
+// ▲▲▲ 替换结束 ▲▲▲
+
+
     document.getElementById('chat-name-group').style.display = 'block';
     document.getElementById('my-persona-group').style.display = 'block';
     document.getElementById('my-avatar-group').style.display = 'block';
@@ -19571,6 +19955,12 @@ const checkedBooks = document.querySelectorAll('#world-book-checkboxes-container
     } else {
         chat.settings.aiPersona = document.getElementById('ai-persona').value;
         chat.settings.aiAvatar = document.getElementById('ai-avatar-preview').src;
+        // ▼▼▼ 在 save-chat-settings-btn 的 click 事件的 else 块内，粘贴这段代码 ▼▼▼
+// 保存视频通话设置
+chat.settings.visualVideoCallEnabled = document.getElementById('visual-video-call-switch').checked;
+chat.settings.charVideoImage = document.getElementById('char-video-image-preview').src;
+chat.settings.userVideoImage = document.getElementById('user-video-image-preview').src;
+// ▲▲▲ 粘贴结束 ▲▲▲
         const selectedGroupId = document.getElementById('assign-group-select').value;
         chat.groupId = selectedGroupId ? parseInt(selectedGroupId) : null;
     }
@@ -19593,6 +19983,10 @@ const checkedBooks = document.querySelectorAll('#world-book-checkboxes-container
             setupFileUpload('member-avatar-input', (base64) => document.getElementById('member-avatar-preview').src = base64);
             setupFileUpload('bg-input', (base64) => { if(state.activeChatId) { state.chats[state.activeChatId].settings.background = base64; const bgPreview = document.getElementById('bg-preview'); bgPreview.src = base64; bgPreview.style.display = 'block'; document.getElementById('remove-bg-btn').style.display = 'inline-block'; } });
             setupFileUpload('preset-avatar-input', (base64) => document.getElementById('preset-avatar-preview').src = base64);
+            // ▼▼▼ 在 init() 函数的事件监听器区域，添加这两行 ▼▼▼
+setupFileUpload('char-video-image-input', (base64) => document.getElementById('char-video-image-preview').src = base64);
+setupFileUpload('user-video-image-input', (base64) => document.getElementById('user-video-image-preview').src = base64);
+// ▲▲▲ 添加结束 ▲▲▲
             document.getElementById('remove-bg-btn').addEventListener('click', () => { if (state.activeChatId) { state.chats[state.activeChatId].settings.background = ''; const bgPreview = document.getElementById('bg-preview'); bgPreview.src = ''; bgPreview.style.display = 'none'; document.getElementById('remove-bg-btn').style.display = 'none'; } });
 
             const stickerPanel = document.getElementById('sticker-panel');
