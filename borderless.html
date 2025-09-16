@@ -5576,6 +5576,7 @@ input:checked + .slider:before {
     gap: 6px; /* 稍微增大间隙，让calc有计算空间 */
     padding: 6px; /* 内边距和间隙保持一致 */
     box-sizing: border-box; /* 确保内边距和边框被包含在总宽度内 */
+    align-content: start; /* <--- 就是加上这一行！ */
 }
 
 /* 3. 稍微缩小图片，确保它们不会撑破容器 */
@@ -18169,17 +18170,31 @@ function renderCharacterChatList() {
         npcChatItem.className = 'chat-list-item';
         npcChatItem.dataset.contactName = contactName;
 
-        const npcNameInitial = contactName.slice(-1);
-        
-        // 【核心修正】使用和聊天详情页完全一样的颜色计算方法
-        const colorIndex = contactName.length % avatarColors.length;
-        const bgColor = avatarColors[colorIndex];
-        
-        const npcAvatarHtml = `
-            <div class="avatar" style="border-radius: 6px; background-color: ${bgColor}; color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 500;">
-                ${npcNameInitial}
-            </div>
-        `;
+// ▼▼▼ 从这里开始替换 ▼▼▼
+        let npcAvatarHtml;
+        const characterChat = state.chats[activeCharacterPhoneId];
+        // 在角色的NPC库中，根据名字查找这个联系人
+        const npcFromLibrary = (characterChat.npcLibrary || []).find(npc => npc.name === contactName);
+
+        // 如果在NPC库中找到了这个NPC，并且他有头像URL
+        if (npcFromLibrary && npcFromLibrary.avatar) {
+            // 就使用他的真实头像
+            npcAvatarHtml = `<img src="${npcFromLibrary.avatar}" class="avatar" style="border-radius: 6px;">`;
+        } else {
+            // 否则 (比如这个NPC是AI临时虚构的，或者你没给他设置头像)，
+            // 我们才使用原来的文字头像作为备用方案
+            const npcNameInitial = contactName.slice(-1);
+            const colorIndex = contactName.length % avatarColors.length;
+            const bgColor = avatarColors[colorIndex];
+            
+            npcAvatarHtml = `
+                <div class="avatar" style="border-radius: 6px; background-color: ${bgColor}; color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 500;">
+                    ${npcNameInitial}
+                </div>
+            `;
+        }
+// ▲▲▲ 替换到这里结束 ▲▲▲
+
 
         npcChatItem.innerHTML = `
             ${npcAvatarHtml}
