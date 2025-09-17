@@ -4773,7 +4773,7 @@ input:checked + .slider:before {
 
 /* ▼▼▼ 从这里开始复制 ▼▼▼ */
 
-/* === 【终极修复版】世界书选择器列表样式 === */
+/* === 【最终修复版】世界书选择器列表样式 === */
 
 /* 1. 分类文件夹行样式：用gap创建固定间距，超稳定 */
 .wb-category-header {
@@ -4784,7 +4784,7 @@ input:checked + .slider:before {
     cursor: pointer;
     background-color: #f0f2f5;
     font-weight: 600;
-    overflow: hidden; /* 防止任何意外 */
+    /* 核心修复：移除了旧的 overflow: hidden */
 }
 
 /* 2. 分类文件夹里的文字样式：只负责截断，不负责布局 */
@@ -4792,6 +4792,7 @@ input:checked + .slider:before {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex-shrink: 1; /* 允许文字部分被压缩 */
 }
 
 /* 3. 【核心修复】为分类文件夹和书目里的复选框“解绑”全局样式！ */
@@ -4808,7 +4809,7 @@ input:checked + .slider:before {
     justify-content: flex-start; /* 强制所有内容从左边开始！*/
     padding: 8px 12px;
     gap: 10px; /* 复选框和文字的间距 */
-    overflow: hidden;
+    /* 核心修复：移除了旧的 overflow: hidden */
 }
 
 /* 5. 具体书目的文字样式 */
@@ -4817,6 +4818,7 @@ input:checked + .slider:before {
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: left;
+    flex-shrink: 1; /* 允许文字部分被压缩 */
 }
 
 /* 6. 夜间模式适配 */
@@ -4828,6 +4830,7 @@ input:checked + .slider:before {
 .wb-category-header .arrow {
     font-size: 12px;
     transition: transform 0.2s ease;
+    flex-shrink: 0; /* 防止被压缩 */
 }
 .wb-category-header.collapsed .arrow {
     transform: rotate(-90deg);
@@ -4845,6 +4848,7 @@ input:checked + .slider:before {
 }
 
 /* ▲▲▲ 复制到这里结束 ▲▲▲ */
+
 
 /* ▼▼▼ 【全新】鼠标拖动工具栏时的手势样式 ▼▼▼ */
 #chat-input-actions-top.grabbing {
@@ -7238,9 +7242,14 @@ input:checked + .slider:before {
 </div>
 <!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
 
-  <div class="avatar-upload"><img id="ai-avatar-preview"><button onclick="document.getElementById('ai-avatar-input').click()">上传对方头像</button><button id="manage-ai-avatar-library-btn">管理头像库</button>
-<button class="change-frame-btn" data-type="ai">更换头像框</button> <!-- ← 加回这一行 -->
-<input type="file" id="ai-avatar-input" accept="image/*"></div></div><div class="form-group" id="my-persona-group"><label for="my-persona">我的人设 (My Persona)</label><textarea id="my-persona" rows="3"></textarea></div><div class="form-group" id="my-avatar-group"><label>我的头像</label><div class="avatar-upload"><img id="my-avatar-preview"><button onclick="document.getElementById('my-avatar-input').click()">上传我的头像</button>
+  <div class="avatar-upload">
+    <img id="ai-avatar-preview">
+    <button onclick="document.getElementById('ai-avatar-input').click()">上传对方头像</button>
+    <button class="change-frame-btn" data-type="ai">更换头像框</button>
+    <button id="manage-ai-avatar-library-btn">管理头像库</button>
+    <input type="file" id="ai-avatar-input" accept="image/*">
+</div>
+</div><div class="form-group" id="my-persona-group"><label for="my-persona">我的人设 (My Persona)</label><textarea id="my-persona" rows="3"></textarea></div><div class="form-group" id="my-avatar-group"><label>我的头像</label><div class="avatar-upload"><img id="my-avatar-preview"><button onclick="document.getElementById('my-avatar-input').click()">上传我的头像</button>
 <button class="change-frame-btn" data-type="my">更换头像框</button> <!-- ← 加回这一行 -->
 <button id="open-persona-library-btn">预设</button><input type="file" id="my-avatar-input" accept="image/*"></div></div><div class="form-group" id="group-members-group"><label>群成员人设</label><div id="group-members-settings"></div>
 
@@ -10163,16 +10172,18 @@ async function renderChatList() {
         
         if (groupChats.length === 0) return; // 如果这个分组里没有未置顶的好友，就跳过
 
+                // ... 省略前面的代码 ...
         const groupContainer = document.createElement('div');
         groupContainer.className = 'chat-group-container';
         groupContainer.innerHTML = `
-            <div class="chat-group-header">
+            <div class="chat-group-header collapsed">
                 <span class="arrow">▼</span>
                 <span class="group-name">${group.name}</span>
             </div>
-            <div class="chat-group-content"></div>
+            <div class="chat-group-content collapsed"></div>
         `;
         const contentEl = groupContainer.querySelector('.chat-group-content');
+        // ... 省略后面的代码 ...
         groupChats.forEach(chat => {
             const item = createChatListItem(chat);
             contentEl.appendChild(item);
