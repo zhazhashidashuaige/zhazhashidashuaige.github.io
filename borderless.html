@@ -5951,6 +5951,78 @@ input:checked + .slider:before {
 }
 
 /* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【最终修复版】世界书选择器列表样式 ▼▼▼ */
+
+/* 1. 分类文件夹行样式：用gap创建固定间距，超稳定 */
+.wb-category-header {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 箭头、复选框、文字之间的固定间距 */
+    padding: 10px 12px;
+    cursor: pointer;
+    background-color: #f0f2f5;
+    font-weight: 600;
+    overflow: hidden; /* 防止任何意外 */
+}
+
+/* 2. 分类文件夹里的文字样式：只负责截断，不负责布局 */
+.wb-category-header > span:last-of-type {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 3. 【核心修复】为分类文件夹和书目里的复选框“解绑”全局样式！ */
+.wb-category-header input[type="checkbox"],
+.wb-book-container input[type="checkbox"] {
+    width: auto !important; /* 让它恢复自己的天然大小，!important确保最高优先级 */
+    flex-shrink: 0;         /* 防止它被压缩 */
+}
+
+/* 4. 具体书目行的样式：强制从左边开始排列，解决iOS问题 */
+.wb-book-container label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 强制所有内容从左边开始！*/
+    padding: 8px 12px;
+    gap: 10px; /* 复选框和文字的间距 */
+    overflow: hidden;
+}
+
+/* 5. 具体书目的文字样式 */
+.wb-book-container label .wb-book-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+/* 6. 夜间模式适配 */
+#phone-screen.dark-mode .wb-category-header {
+    background-color: #2c2c2e;
+}
+
+/* 7. 小箭头的样式（保持不变） */
+.wb-category-header .arrow {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+.wb-category-header.collapsed .arrow {
+    transform: rotate(-90deg);
+}
+
+/* 8. 书籍容器的样式（保持不变） */
+.wb-book-container {
+    padding-left: 20px;
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+.wb-book-container.collapsed {
+    max-height: 0;
+}
+
+/* ▲▲▲ 粘贴结束 ▲▲▲ */
 
 /* ▲▲▲ 样式添加结束 ▲▲▲ */
 
@@ -6209,6 +6281,15 @@ input:checked + .slider:before {
 <span id="chat-list-title">消息</span>
         <div class="header-actions">
             <span class="action-btn" id="add-group-chat-btn" title="创建群聊"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.5 17.5C19.1569 17.5 20.5 16.1569 20.5 14.5C20.5 12.8431 19.1569 11.5 17.5 11.5C15.8431 11.5 14.5 12.8431 14.5 14.5C14.5 16.1569 15.8431 17.5 17.5 17.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 21L19 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 11.5C10.1569 11.5 11.5 10.1569 11.5 8.5C11.5 6.84315 10.1569 5.5 8.5 5.5C6.84315 5.5 5.5 6.84315 5.5 8.5C5.5 10.1569 6.84315 11.5 8.5 11.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 14.5H4.5C3.39543 14.5 2.5 15.3954 2.5 16.5V18.5H12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <!-- ▼▼▼ 这是我们新加的导入按钮 ▼▼▼ -->
+<span class="action-btn" id="import-character-card-btn" title="导入角色卡">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+    </svg>
+</span>
+<!-- ▲▲▲ 导入按钮结束 ▲▲▲ -->
             <span class="action-btn" id="add-chat-btn">+</span>
         </div>
     </div>
@@ -8794,6 +8875,313 @@ chats: '&id, isGroup, groupId, isPinned, characterPhoneData',
         // ===================================================================
         // 3. 所有功能函数定义
         // ===================================================================
+// ===================================================================
+// 3. 所有功能函数定义
+// ===================================================================
+
+// ▼▼▼ 从这里开始，粘贴所有新代码 ▼▼▼
+
+/**
+ * 【总入口】处理用户选择的角色卡文件
+ * @param {File} file - 用户选择的文件对象
+ */
+async function handleCharacterImport(file) {
+    if (!file) return;
+
+    try {
+        let characterData;
+        let avatarBase64;
+
+        if (file.name.toLowerCase().endsWith('.png')) {
+            // 如果是PNG文件，调用PNG解析函数
+            const result = await parseCharPng(file);
+            characterData = result.characterData;
+            avatarBase64 = result.avatarBase64;
+        } else if (file.name.toLowerCase().endsWith('.json')) {
+            // 如果是JSON文件，调用JSON解析函数
+            characterData = await parseCharJson(file);
+            // JSON卡通常不包含图片，我们给一个默认头像
+            avatarBase64 = defaultAvatar;
+        } else {
+            alert('不支持的文件格式，请选择 .png 或 .json 文件。');
+            return;
+        }
+
+        if (characterData) {
+            // 成功解析出数据后，调用创建函数
+            await createCharacterFromData(characterData, avatarBase64);
+        }
+
+    } catch (error) {
+        console.error("导入角色卡失败:", error);
+        alert(`导入失败: ${error.message}`);
+    }
+}
+
+/**
+ * 【V3 - 最终乱码修复版】
+ * 解析SillyTavern的PNG角色卡，通过字节级操作彻底解决中文乱码问题。
+ * @param {File} file - PNG文件
+ * @returns {Promise<{characterData: object, avatarBase64: string}>}
+ */
+async function parseCharPng(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const arrayBuffer = e.target.result;
+            const dataView = new DataView(arrayBuffer);
+
+            if (dataView.getUint32(0) !== 0x89504E47 || dataView.getUint32(4) !== 0x0D0A1A0A) {
+                return reject(new Error('文件不是一个有效的PNG图片。'));
+            }
+
+            let offset = 8;
+            let characterJson = null;
+
+            while (offset < dataView.byteLength) {
+                const length = dataView.getUint32(offset);
+                const type = String.fromCharCode(
+                    dataView.getUint8(offset + 4),
+                    dataView.getUint8(offset + 5),
+                    dataView.getUint8(offset + 6),
+                    dataView.getUint8(offset + 7)
+                );
+
+                if (type === 'tEXt') {
+                    const chunkData = new Uint8Array(arrayBuffer, offset + 8, length);
+                    
+                    // ★★★★★【这是本次修复乱码的核心代码】★★★★★
+                    // 1. 先用一个简单的编码将字节转为字符串，以便查找关键字 "chara"
+                    let text = '';
+                    for (let i = 0; i < chunkData.length; i++) {
+                        text += String.fromCharCode(chunkData[i]);
+                    }
+
+                    // 2. 检查关键字是否存在
+                    const keyword = 'chara' + String.fromCharCode(0);
+                    if (text.startsWith(keyword)) {
+                        // 3. 提取出关键字后面的 Base64 编码的字符串
+                        const base64Data = text.substring(keyword.length);
+                        try {
+                            // 4. 使用 atob() 解码 Base64，得到一个“二进制字符串”
+                            const binaryString = atob(base64Data);
+                            
+                            // 5. 将这个“二进制字符串”重新转换为原始的 UTF-8 字节数组
+                            const bytes = new Uint8Array(binaryString.length);
+                            for (let i = 0; i < binaryString.length; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+                            
+                            // 6. 使用 TextDecoder 将这个纯净的 UTF-8 字节数组解码为正确的字符串
+                            const decodedJsonString = new TextDecoder('utf-8').decode(bytes);
+                            
+                            // 7. 解析最终的JSON字符串
+                            characterJson = JSON.parse(decodedJsonString);
+                            break;
+                        } catch (e) {
+                            return reject(new Error('解析图片内嵌的角色数据失败，可能是数据损坏。'));
+                        }
+                    }
+                    // ★★★★★【核心代码结束】★★★★★
+                }
+                
+                if (type === 'IEND') break;
+                offset += 12 + length;
+            }
+
+            if (characterJson) {
+                const imageReader = new FileReader();
+                imageReader.onload = (imgEvent) => {
+                    resolve({
+                        characterData: characterJson,
+                        avatarBase64: imgEvent.target.result
+                    });
+                };
+                imageReader.onerror = () => reject(new Error('读取图片作为头像失败。'));
+                imageReader.readAsDataURL(file);
+            } else {
+                reject(new Error('在这张PNG图片中没有找到SillyTavern角色数据。'));
+            }
+        };
+        reader.onerror = () => reject(new Error('读取PNG文件失败。'));
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+
+/**
+ * 解析JSON角色卡
+ * @param {File} file - JSON文件
+ * @returns {Promise<object>}
+ */
+/**
+ * 【修正版】解析JSON角色卡，强制使用UTF-8编码
+ * @param {File} file - JSON文件
+ * @returns {Promise<object>}
+ */
+async function parseCharJson(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                // 核心修正：先读取为ArrayBuffer，再用TextDecoder指定UTF-8解码
+                const arrayBuffer = e.target.result;
+                const textDecoder = new TextDecoder('utf-8');
+                const jsonString = textDecoder.decode(arrayBuffer);
+                const data = JSON.parse(jsonString);
+                // 兼容两种可能的格式
+                resolve(data.data || data);
+            } catch (error) {
+                reject(new Error('解析JSON文件失败，请检查文件格式或编码。'));
+            }
+        };
+        reader.onerror = () => reject(new Error('读取JSON文件失败。'));
+        // 核心修正：读取为ArrayBuffer而不是Text
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+/**
+ * 【V5 - 最终适配版 - 识别 character_book】
+ * 根据解析出的数据创建新角色和世界书。
+ * 这个版本将优先查找您提供的 character_book 标准格式。
+ * @param {object} data - 从卡片解析出的最原始的JSON数据
+ * @param {string} avatarBase64 - 角色的头像图片 (Base64)
+ */
+async function createCharacterFromData(data, avatarBase64) {
+    // 步骤 1: 确定核心角色数据 (不变)
+    const charData = data.data || data;
+    const characterName = charData.name ? charData.name.trim() : '未命名角色';
+    
+    // 步骤 2: 创建新的聊天对象 (不变)
+    const newChatId = 'chat_' + Date.now();
+    const newChat = {
+        id: newChatId,
+        name: characterName,
+        isGroup: false,
+        isPinned: false,
+        npcLibrary: [],
+        relationship: { status: 'friend', blockedTimestamp: null, applicationReason: '' },
+        status: { text: '在线', lastUpdate: Date.now(), isBusy: false },
+        settings: {
+            aiPersona: charData.description || '该角色没有描述。',
+            myPersona: '我是谁呀。',
+            maxMemory: 10,
+            aiAvatar: avatarBase64,
+            myAvatar: defaultAvatar,
+            background: '',
+            theme: 'default',
+            fontSize: 13,
+            customCss: '',
+            linkedWorldBookIds: [],
+            aiAvatarLibrary: [],
+        },
+        history: [],
+        musicData: { totalTime: 0 },
+        characterPhoneData: {}
+    };
+    await db.chats.put(newChat);
+    state.chats[newChatId] = newChat;
+    
+    // =================================================================
+    // ▼▼▼ 核心修改：重构世界书查找逻辑 ▼▼▼
+    // =================================================================
+    
+    console.log("开始检测世界书数据...");
+    let worldBookFound = false;
+
+    // 策略一：【最高优先级】查找您提供的 character_book 标准格式
+    if (charData.character_book && charData.character_book.entries && Array.isArray(charData.character_book.entries) && charData.character_book.entries.length > 0) {
+        console.log(`检测到最新的 character_book 格式 (${charData.character_book.entries.length}条)，开始导入...`);
+        const newCategory = { name: characterName };
+        const newCategoryId = await db.worldBookCategories.add(newCategory);
+        // 我们将调用【修改后】的辅助函数来处理
+        await saveWorldBookEntriesFromArray(charData.character_book.entries, newCategoryId);
+        worldBookFound = true;
+    }
+    
+    // 策略二：兼容旧的 world_entries 格式
+    else if (charData.world_entries && Array.isArray(charData.world_entries) && charData.world_entries.length > 0) {
+        console.log(`检测到旧版 world_entries 格式 (${charData.world_entries.length}条)，开始导入...`);
+        const newCategory = { name: characterName };
+        const newCategoryId = await db.worldBookCategories.add(newCategory);
+        await saveWorldBookEntriesFromArray(charData.world_entries, newCategoryId);
+        worldBookFound = true;
+    }
+    
+    // 策略三：兼容更旧的 data.world 格式
+    else if (data.world && typeof data.world === 'string' && data.world.trim()) {
+        console.log("检测到外层 world 字段格式，开始导入...");
+        const newCategory = { name: characterName };
+        const newCategoryId = await db.worldBookCategories.add(newCategory);
+        await parseAndSaveWorldBooks(data.world, newCategoryId);
+        worldBookFound = true;
+    }
+
+    // 策略四：最后的兼容手段 world_info
+    else if (charData.world_info && typeof charData.world_info === 'string' && charData.world_info.trim()) {
+        console.log("检测到旧版 world_info 字段格式，开始导入...");
+        const newCategory = { name: characterName };
+        const newCategoryId = await db.worldBookCategories.add(newCategory);
+        await parseAndSaveWorldBooks(charData.world_info, newCategoryId);
+        worldBookFound = true;
+    }
+
+    if (!worldBookFound) {
+        console.log("诊断：在此角色卡中未找到任何可识别的世界书字段。");
+    }
+    
+    // =================================================================
+    // ▲▲▲ 核心修改结束 ▲▲▲
+    // =================================================================
+
+    // 步骤 4: 刷新UI (不变)
+    await renderChatList();
+    await showCustomAlert('导入成功！', `角色“${characterName}”已成功创建！`);
+}
+
+
+/**
+ * 【V2 - 适配 comment 字段】
+ * 从SillyTavern的 world_entries 或 character_book.entries 数组直接创建世界书
+ * @param {Array<object>} entriesArray - 包含世界书条目的数组
+ * @param {number} categoryId - 这些世界书所属的分类ID
+ */
+async function saveWorldBookEntriesFromArray(entriesArray, categoryId) {
+    const newBooks = [];
+
+    for (const entry of entriesArray) {
+        // ▼▼▼ 核心修改：智能获取条目名称 ▼▼▼
+        // 优先使用 comment 字段作为标题，如果它存在且不为空。
+        // 否则，再尝试使用 keys 数组。
+        // 如果都没有，就给一个默认名字。
+        const entryName = (entry.comment && entry.comment.trim()) 
+                          ? entry.comment.trim() 
+                          : (entry.keys && entry.keys.length > 0 ? entry.keys.join(', ') : '未命名条目');
+        // ▲▲▲ 核心修改结束 ▲▲▲
+
+        // 检查条目是否有效 (有名字、有内容，并且是启用的)
+        // (typeof entry.enabled === 'undefined' || entry.enabled) 是为了兼容没有 enabled 字段的卡片
+        if (entryName !== '未命名条目' && entry.content && (typeof entry.enabled === 'undefined' || entry.enabled)) {
+            newBooks.push({
+                id: 'wb_' + Date.now() + Math.random(),
+                name: entryName, // 使用我们智能获取到的名字
+                content: entry.content,
+                categoryId: categoryId
+            });
+        }
+    }
+
+    if (newBooks.length > 0) {
+        await db.worldBooks.bulkAdd(newBooks);
+        // 确保 state.worldBooks 也被更新，以便UI能立即显示
+        const allBooks = await db.worldBooks.toArray();
+        state.worldBooks = allBooks;
+        console.log(`成功导入 ${newBooks.length} 个世界书条目到分类ID: ${categoryId}`);
+    }
+}
+
+
 
 // 【辅助函数】获取事件的坐标
 function getEventCoords(e) {
@@ -19333,7 +19721,22 @@ applyAppIcons();
             // ==========================================================
             // --- 各种事件监听器 ---
             // ==========================================================
+ // ▼▼▼ 这是我们新加的导入功能事件监听 ▼▼▼
+        document.getElementById('import-character-card-btn').addEventListener('click', () => {
+            // 点击我们的新按钮时，就去触发那个隐藏的文件选择框
+            document.getElementById('character-card-input').click();
+        });
 
+        document.getElementById('character-card-input').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // 当用户选择了文件后，调用我们的总处理函数
+                handleCharacterImport(file);
+            }
+            // 清空选择，这样用户下次还能选择同一个文件
+            event.target.value = null; 
+        });
+        // ▲▲▲ 新事件监听结束 ▲▲▲
 // ▼▼▼ 在 init() 的事件监听器区域，粘贴这行新代码 ▼▼▼
 document.getElementById('phone-screen').addEventListener('click', unlockAudioContext, { once: true });
 // ▲▲▲ 新代码粘贴结束 ▲▲▲
@@ -19751,7 +20154,6 @@ document.getElementById('reroll-call-btn-text').addEventListener('click', handle
         }); 
     }
     
-    // 加载世界书
 // ▼▼▼ 用下面这段【全新逻辑】替换掉原来简单的 forEach 循环 ▼▼▼
 
 const worldBookCheckboxesContainer = document.getElementById('world-book-checkboxes-container');
@@ -19799,15 +20201,14 @@ categories.forEach(category => {
         booksInCategory.forEach(book => {
             const isChecked = linkedIds.has(book.id);
             const label = document.createElement('label');
-    label.innerHTML = `<input type="checkbox" class="wb-book-checkbox" value="${book.id}" data-parent-category="${category.id}" ${isChecked ? 'checked' : ''}> ${book.name}`;
-    bookContainer.appendChild(label);
-});
+            // 【核心修复】给书名包一个span，方便CSS做省略号处理
+            label.innerHTML = `<input type="checkbox" class="wb-book-checkbox" value="${book.id}" data-parent-category="${category.id}" ${isChecked ? 'checked' : ''}> <span class="wb-book-name">${book.name}</span>`;
+            bookContainer.appendChild(label);
+        });
 
-        // --- ★ 核心修改 #1 在这里 ★ ---
-        // 默认将分类设置为折叠状态
+        // 默认将所有文件夹设置为折叠状态，保持界面整洁
         header.classList.add('collapsed');
         bookContainer.classList.add('collapsed');
-        // --- ★ 修改结束 ★ ---
 
         worldBookCheckboxesContainer.appendChild(header);
         worldBookCheckboxesContainer.appendChild(bookContainer);
@@ -19817,16 +20218,15 @@ categories.forEach(category => {
 updateWorldBookSelectionDisplay(); // 更新顶部的已选数量显示
 
 // ▲▲▲ 替换结束 ▲▲▲
-
 // ▼▼▼ 在 updateWorldBookSelectionDisplay(); 的下一行，粘贴这整块新代码 ▼▼▼
 
 // 使用事件委托来处理所有点击和勾选事件，效率更高
 worldBookCheckboxesContainer.addEventListener('click', (e) => {
     const header = e.target.closest('.wb-category-header');
+    // 如果点击的是文件夹头部，并且不是点在复选框上
     if (header && !e.target.matches('input[type="checkbox"]')) {
         const categoryId = header.querySelector('.wb-category-checkbox')?.dataset.categoryId;
-        // 【修改】现在 categoryId 可能是数字，也可能是 "uncategorized" 字符串，所以这个判断能通过了！
-        if (categoryId) { // <-- 把原来的 !categoryId return; 改成这样
+        if (categoryId) {
             const bookContainer = worldBookCheckboxesContainer.querySelector(`.wb-book-container[data-container-for="${categoryId}"]`);
             if (bookContainer) {
                 header.classList.toggle('collapsed');
@@ -19857,7 +20257,7 @@ worldBookCheckboxesContainer.addEventListener('change', (e) => {
             // 检查该分类下是否所有书籍都被选中了
             const allChecked = Array.from(allBookCheckboxes).every(cb => cb.checked);
             // 同步分类“全选”复选框的状态
-            categoryCheckbox.checked = allChecked;
+            if(categoryCheckbox) categoryCheckbox.checked = allChecked;
         }
     }
     
@@ -19866,6 +20266,7 @@ worldBookCheckboxesContainer.addEventListener('change', (e) => {
 });
 
 // ▲▲▲ 粘贴结束 ▲▲▲
+
 
     // 加载并更新所有预览相关控件
     const themeRadio = document.querySelector(`input[name="theme-select"][value="${chat.settings.theme || 'default'}"]`);
@@ -22546,5 +22947,8 @@ document.querySelector('#background-activity-details').addEventListener('click',
         init();
     });
 </script>
+<!-- ▼▼▼ 这是我们新加的隐藏文件选择器 ▼▼▼ -->
+<input type="file" id="character-card-input" accept=".png, .json" style="display: none;">
+<!-- ▲▲▲ 文件选择器结束 ▲▲▲ -->
 </body>
 </html>
