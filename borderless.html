@@ -6131,6 +6131,23 @@ input:checked + .slider:before {
 }
 /* ▼▼▼ 【全新】BGM搜索结果弹窗样式 ▼▼▼ */
 
+/* ▼▼▼ 在这里添加下面这段新样式 ▼▼▼ */
+#music-search-results-modal .modal-content {
+    z-index: 220; /* 这个值比播放列表的 210 要高 */
+}
+/* ▲▲▲ 添加结束 ▲▲▲ */
+
+.search-result-item {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* ▼▼▼ 【全新】BGM搜索结果弹窗样式 ▼▼▼ */
+
 .search-result-item {
     display: flex;
     flex-direction: column;
@@ -6170,9 +6187,144 @@ input:checked + .slider:before {
     margin-left: 8px;
 }
 /* ▲▲▲ 新增CSS结束 ▲▲▲ */
+/* ▼▼▼ 【全新】BGM搜索源选择弹窗样式 ▼▼▼ */
+#music-source-selector-modal .modal-body label {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#music-source-selector-modal .modal-body input[type="radio"] {
+    width: 18px;
+    height: 18px;
+}
+/* ▲▲▲ 新增CSS结束 ▲▲▲ */
+/* ▼▼▼ 用这整块【布局微调版】样式，替换掉上一次的旧样式 ▼▼▼ */
 
-/* ▲▲▲ 样式添加结束 ▲▲▲ */
+/* 1. 闪烁动画 (保持不变) */
+@keyframes flash-char {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 3px rgba(255,192,203, 0); }
+    50% { opacity: 0.8; transform: scale(1.08); box-shadow: 0 0 12px rgba(255,192,203, 0.9); }
+}
+@keyframes flash-user {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 3px rgba(173,216,230, 0); }
+    50% { opacity: 0.8; transform: scale(1.08); box-shadow: 0 0 12px rgba(173,216,230, 0.9); }
+}
 
+/* 2. 【核心修改】调整头像容器的下边距 */
+#music-avatars-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px; /* <<<< 从 25px 减小到 8px，让它和下面的文字更近 */
+    position: relative;
+    z-index: 5;
+}
+
+/* 3. 单个头像样式 (保持不变) */
+#music-avatars-container img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 4. 分开闪烁动画 (保持不变) */
+#music-avatars-container.flashing #music-char-avatar {
+    animation: flash-char 2.2s infinite ease-in-out;
+}
+#music-avatars-container.flashing #music-user-avatar {
+    animation: flash-user 2.2s infinite ease-in-out 0.3s;
+}
+
+/* 5. 心电图样式 (保持不变) */
+#heartbeat-line {
+    width: 80px;
+    height: 30px;
+    overflow: visible;
+    margin: 0 -15px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+#music-avatars-container.flashing #heartbeat-line {
+    opacity: 1;
+}
+.heartbeat-path {
+    stroke: #FFC0CB;
+    stroke-width: 1.5;
+    fill: none;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw-line 2.2s infinite linear;
+    filter: drop-shadow(0 0 3px #FFC0CB); 
+}
+.heartbeat-heart {
+    display: none;
+}
+@keyframes draw-line {
+    to { stroke-dashoffset: 0; }
+}
+
+/* 6. 【核心修改】调整“一起听了”文字的样式和边距 */
+#music-time-counter {
+    margin-bottom: 20px; /* <<<< 现在由它来负责和下面的封面拉开距离 */
+    font-size: 11px;
+    color: #666; /* 颜色稍微加深一点 */
+    text-align: center;
+}
+
+/* 7. 唱片旋转动画 (保持不变) */
+@keyframes spin-record {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 8. 封面和歌词的切换容器 (保持不变) */
+#music-display-area {
+    width: 192px;
+    height: 192px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.3s ease;
+}
+#music-display-area:active {
+    transform: scale(0.98);
+}
+
+/* 9. 歌曲封面 (保持不变) */
+#music-album-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: block;
+}
+#music-album-cover.rotating {
+    animation: spin-record 10s linear infinite;
+}
+#music-album-cover.paused {
+    animation-play-state: paused;
+}
+
+/* 10. 其他样式 (保持不变) */
+#music-lyrics-container { display: none; }
+#music-display-area.show-lyrics #music-album-cover { display: none; }
+#music-display-area.show-lyrics #music-lyrics-container { display: block; }
+#music-player-song-title { margin-bottom: 2px; }
+#music-player-artist { margin-bottom: 10px; }
+.music-player-window { min-height: 480px; }
+
+/* ▲▲▲ 布局微调版样式粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【最终修复版】提升搜索相关弹窗的层级 ▼▼▼ */
+#music-source-selector-modal,
+#custom-modal-overlay {
+    z-index: 250 !important; /* 这个值必须高于播放列表(210)，!important确保它拥有最高优先级 */
+}
+/* ▲▲▲ 粘贴结束 ▲▲▲ */
     </style>
     <!-- ▼▼▼ 在这里添加下面这行 ▼▼▼ -->
     <style id="custom-theme-style"></style>
@@ -6720,52 +6872,61 @@ input:checked + .slider:before {
     
     <!-- 音乐播放器 (保持不变) -->
 <div id="music-player-overlay">
-    <div class="music-player-window">
-        
-        <!-- 1. 顶部操作栏 -->
-        <div class="music-player-top-actions">
-            <div class="top-left-cluster">
-                <button id="music-return-btn">‹</button>
-                <button id="music-exit-btn">×</button>
-            </div>
-            <span id="music-playlist-btn">☰</span>
+<div class="music-player-window">
+    <!-- 1. 顶部头像区域 -->
+    <div id="music-avatars-container">
+        <img id="music-char-avatar" src="" alt="角色头像">
+        <svg id="heartbeat-line" viewBox="0 0 80 30">
+            <path class="heartbeat-path" d="M 5 15 Q 20 0 30 15 T 55 15 L 75 15"></path>
+            <path class="heartbeat-heart" d="M 0 -2 a 2 2 0 0 1 4 0 v 2 a 2 2 0 0 1 -4 0 z"></path>
+        </svg>
+        <img id="music-user-avatar" src="" alt="用户头像">
+    </div>
+    
+    <!-- ▼▼▼ 【核心修改】我们把这行文字移到了这里 ▼▼▼ -->
+    <div id="music-time-counter">已经一起听了0.0小时</div>
+
+    <!-- 2. 顶部操作按钮 -->
+    <div class="music-player-top-actions">
+        <div class="top-left-cluster">
+            <button id="music-return-btn">‹</button>
+            <button id="music-exit-btn">×</button>
         </div>
-        
-        <!-- 2. 歌曲信息 -->
-        <div id="music-time-counter">已经一起听了0.0小时</div>
-        <div id="music-player-song-title">请添加歌曲</div>
-        <div id="music-player-artist">...</div>
-        
-        <!-- 3. 【全新】歌词显示区域 -->
+        <span id="music-playlist-btn">☰</span>
+    </div>
+
+    <!-- 3. 封面和歌词的切换容器 -->
+    <div id="music-display-area">
+        <img id="music-album-cover" src="https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png" alt="歌曲封面">
         <div id="music-lyrics-container">
             <div id="music-lyrics-list">
-                <!-- 歌词将由JS动态生成在这里 -->
                 <div class="lyric-line">♪ 暂无歌词 ♪</div>
             </div>
         </div>
-        
-        <!-- 4. 【全新】播放控制区的包裹容器 -->
-        <div class="music-player-controls-wrapper">
-            <!-- a. 新的iOS风格进度条 -->
-            <div class="music-progress-bar-container">
-                <div id="music-current-time" class="time-display">0:00</div>
-                <div class="progress-bar">
-                    <div id="music-progress-fill" class="progress-bar-fill"></div>
-                </div>
-                <div id="music-total-time" class="time-display">0:00</div>
+    </div>
+
+    <!-- 4. 歌曲信息 -->
+    <div id="music-player-song-title">请添加歌曲</div>
+    <div id="music-player-artist">...</div>
+    
+    <!-- 5. 播放控制区 (保持不变) -->
+    <div class="music-player-controls-wrapper">
+        <div class="music-progress-bar-container">
+            <div id="music-current-time" class="time-display">0:00</div>
+            <div class="progress-bar">
+                <div id="music-progress-fill" class="progress-bar-fill"></div>
             </div>
-            
-            <!-- b. 播放控制按钮 -->
-            <div class="music-controls">
-                <button id="music-prev-btn">◀</button>
-                <button id="music-play-pause-btn" class="play-pause-btn">▶</button>
-                <button id="music-next-btn">▶</button>
-                <button id="music-mode-btn">顺序</button>
-    <!-- ▼▼▼ 在这里粘贴新按钮 ▼▼▼ -->
-    <button id="toggle-lyrics-bar-btn" title="桌面歌词">悬浮</button>
-    <!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
-            </div>
+            <div id="music-total-time" class="time-display">0:00</div>
         </div>
+        <div class="music-controls">
+            <button id="music-prev-btn">◀</button>
+            <button id="music-play-pause-btn" class="play-pause-btn">▶</button>
+            <button id="music-next-btn">▶</button>
+            <button id="music-mode-btn">顺序</button>
+            <button id="toggle-lyrics-bar-btn" title="桌面歌词">悬浮</button>
+        </div>
+    </div>
+</div>
 
     </div>
 </div>
@@ -8139,16 +8300,32 @@ input:checked + .slider:before {
     </div>
 </div>
 <!-- ▲▲▲ 新HTML粘贴结束 ▲▲▲ -->
+<!-- ▼▼▼ 【全新】这是“选择搜索源”的弹窗，请粘贴到body末尾 ▼▼▼ -->
+<div id="music-source-selector-modal" class="modal">
+    <div class="modal-content" style="height: auto;">
+        <div class="modal-header">
+            <span>选择搜索源</span>
+        </div>
+        <div class="modal-body" style="text-align: left; padding: 20px;">
+            <label style="display: block; margin-bottom: 15px; cursor: pointer;">
+                <input type="radio" name="search-source" value="all" checked> 全部来源 (网易云 + QQ音乐)
+            </label>
+            <label style="display: block; margin-bottom: 15px; cursor: pointer;">
+                <input type="radio" name="search-source" value="netease"> 仅网易云音乐
+            </label>
+            <label style="display: block; cursor: pointer;">
+                <input type="radio" name="search-source" value="tencent"> 仅QQ音乐
+            </label>
+        </div>
+        <div class="modal-footer">
+            <button class="cancel" id="cancel-source-select-btn">取消</button>
+            <button class="save" id="confirm-source-select-btn">开始搜索</button>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ 新增HTML结束 ▲▲▲ -->
 
 <script>
-
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?f10d2d63c3bf95c772971b5f16e21026";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
 
 
         const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
@@ -8435,28 +8612,50 @@ function checkAudioAvailability(url) {
     });
 }
 
+// ▼▼▼ 【V9.0 | 终极纯净版 - 移除代理】请用这块代码，完整替换旧的 searchNeteaseMusic 函数 ▼▼▼
 /**
- * 从网易云搜索歌曲列表
+ * 移除所有代理，直接请求你找到的 vkeys.cn API
  */
 async function searchNeteaseMusic(name, singer) {
     try {
         let searchTerm = name.replace(/\s/g, "");
-        if (singer) { searchTerm += `-${singer.replace(/\s/g, "")}`; }
-        const result = await Http_Get(`https://api.vkeys.cn/v2/music/netease?word=${encodeURIComponent(searchTerm)}`);
-        if (!result?.data?.length) return [];
+        if (singer) { searchTerm += ` ${singer.replace(/\s/g, "")}`; }
+
+        // 【核心修改】我们不再需要任何代理，直接把目标API作为最终请求地址！
+        const apiUrl = `https://api.vkeys.cn/v2/music/netease?word=${encodeURIComponent(searchTerm)}`;
+        
+        console.log("正在尝试直接请求:", apiUrl); // 添加一条日志，方便我们调试
+        
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+
+        if (result.code !== 200 || !result.data || result.data.length === 0) {
+            console.log("vkeys API返回无结果:", result);
+            return [];
+        }
         
         return result.data.map(song => ({
-            name: song.name,
-            artist: song.ar.map(a => a.name).join(' / '),
+            name: song.song,
+            artist: song.singer,
             id: song.id,
-            cover: song.al?.picUrl || song.picUrl || 'https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png',
-            source: 'netease' // 标记来源
-        })).slice(0, 5); // 只取前5条结果
+            cover: song.cover || 'https://i.postimg.cc/pT2xKzP-album-cover-placeholder.png',
+            source: 'netease'
+        })).slice(0, 15);
+
     } catch (e) {
-        console.error("网易云搜索API失败:", e);
+        // 如果这次还失败，请把浏览器F12控制台里的红色错误信息完整地截图给我
+        console.error("【vkeys API 直连】搜索失败:", e);
+        await showCustomAlert("网易云接口直连失败", `如果浏览器控制台(F12)提示CORS错误，说明此API禁止直接访问。错误: ${e.message}`);
         return [];
     }
 }
+// ▲▲▲ 替换结束 ▲▲▲
+
 
 /**
  * 从QQ音乐搜索歌曲列表
@@ -8478,14 +8677,21 @@ async function searchTencentMusic(name) {
         return [];
     }
 }
+// ▼▼▼ 【V2.0 | 支持源选择】请用这个全新的函数，完整替换旧的 addSongFromSearch ▼▼▼
 /**
- * 【总入口】当用户点击“搜索”按钮时触发
+ * 【总入口 V2.0】当用户点击“搜索”按钮时触发
  */
 async function addSongFromSearch() {
+    // 步骤 1: 首先弹出选择框，让用户选择搜索源
+    const source = await showSearchSourceSelector();
+    // 如果用户点了取消，source会是null，我们直接退出函数
+    if (!source) return;
+
+    // 步骤 2: 弹出输入框让用户输入关键词 (这部分逻辑不变)
     const searchTerm = await showCustomPrompt("搜索歌曲", "请输入 歌名 或 歌名-歌手");
     if (!searchTerm || !searchTerm.trim()) return;
 
-    await showCustomAlert("请稍候...", "正在全网搜索歌曲资源...");
+    await showCustomAlert("请稍候...", "正在搜索歌曲资源...");
 
     let musicName = searchTerm.trim();
     let singerName = "";
@@ -8495,15 +8701,27 @@ async function addSongFromSearch() {
         singerName = parts.slice(1).join(' ').trim();
     }
 
-    const [neteaseResults, tencentResults] = await Promise.all([
-        searchNeteaseMusic(musicName, singerName),
-        searchTencentMusic(musicName)
-    ]);
+    // 步骤 3: 【核心修改】根据用户的选择，执行不同的搜索
+    let combinedResults = [];
 
-    const combinedResults = [...neteaseResults, ...tencentResults];
+    if (source === 'all') {
+        // 如果选择“全部”，则并行搜索两个平台
+        const [neteaseResults, tencentResults] = await Promise.all([
+            searchNeteaseMusic(musicName, singerName),
+            searchTencentMusic(musicName)
+        ]);
+        combinedResults = [...neteaseResults, ...tencentResults];
+    } else if (source === 'netease') {
+        // 如果只选“网易云”，就只调用网易云的搜索
+        combinedResults = await searchNeteaseMusic(musicName, singerName);
+    } else if (source === 'tencent') {
+        // 如果只选“QQ音乐”，就只调用QQ音乐的搜索
+        combinedResults = await searchTencentMusic(musicName);
+    }
 
+    // 步骤 4: 后续的显示逻辑保持不变
     if (combinedResults.length === 0) {
-        await showCustomAlert("无结果", "抱歉，未能找到相关歌曲。");
+        await showCustomAlert("无结果", "抱歉，在所选来源中未能找到相关歌曲。");
         return;
     }
 
@@ -8524,6 +8742,7 @@ async function addSongFromSearch() {
 
     modal.classList.add('visible');
 }
+// ▲▲▲ 替换结束 ▲▲▲
 
 /**
  * 【核心升级】处理用户点击搜索结果，增加备用音源查找和是否永久保存的逻辑
@@ -8631,6 +8850,46 @@ async function getLyricsForSong(songId, source) {
     }
     return "";
 }
+// ▼▼▼ 【全新】这个函数用来显示“选择搜索源”的弹窗 ▼▼▼
+/**
+ * 显示搜索源选择弹窗，并返回用户的选择
+ * @returns {Promise<string|null>} 返回 'all', 'netease', 'tencent', 或 null
+ */
+function showSearchSourceSelector() {
+    return new Promise(resolve => {
+        const modal = document.getElementById('music-source-selector-modal');
+        const confirmBtn = document.getElementById('confirm-source-select-btn');
+        const cancelBtn = document.getElementById('cancel-source-select-btn');
+
+        // 显示弹窗
+        modal.classList.add('visible');
+
+        // 定义确认按钮的点击事件
+        const onConfirm = () => {
+            const selectedSource = document.querySelector('input[name="search-source"]:checked').value;
+            cleanup();
+            resolve(selectedSource); // 返回用户的选择
+        };
+
+        // 定义取消按钮的点击事件
+        const onCancel = () => {
+            cleanup();
+            resolve(null); // 用户取消，返回 null
+        };
+
+        // 清理函数，用于移除事件监听并隐藏弹窗
+        const cleanup = () => {
+            modal.classList.remove('visible');
+            confirmBtn.removeEventListener('click', onConfirm);
+            cancelBtn.removeEventListener('click', onCancel);
+        };
+
+        // 绑定事件
+        confirmBtn.addEventListener('click', onConfirm);
+        cancelBtn.addEventListener('click', onCancel);
+    });
+}
+// ▲▲▲ 新增函数结束 ▲▲▲
 
 // ▲▲▲ 新增函数粘贴结束 ▲▲▲
 
@@ -13396,7 +13655,59 @@ function returnToChat() {
         function updateListenTogetherIcon(chatId, forceReset = false) { const iconImg = document.querySelector('#listen-together-btn img'); if(!iconImg) return; if(forceReset || !musicState.isActive || musicState.activeChatId !== chatId) { iconImg.src = 'https://i.postimg.cc/8kYShvrJ/90-UI-2.png'; iconImg.className = ''; return; } iconImg.src = 'https://i.postimg.cc/D0pq6qS2/E30078-DC-8-B99-4-C01-AFDA-74728-DBF7-BEA.png'; iconImg.classList.add('rotating'); if (musicState.isPlaying) iconImg.classList.remove('paused'); else iconImg.classList.add('paused'); }
         window.updateListenTogetherIconProxy = updateListenTogetherIcon;
 
-        function updatePlayerUI() { updateListenTogetherIcon(musicState.activeChatId); updateElapsedTimeDisplay(); const titleEl = document.getElementById('music-player-song-title'); const artistEl = document.getElementById('music-player-artist'); const playPauseBtn = document.getElementById('music-play-pause-btn'); if (musicState.currentIndex > -1 && musicState.playlist.length > 0) { const track = musicState.playlist[musicState.currentIndex]; titleEl.textContent = track.name; artistEl.textContent = track.artist; } else { titleEl.textContent = '请添加歌曲'; artistEl.textContent = '...'; } playPauseBtn.textContent = musicState.isPlaying ? '❚❚' : '▶'; }
+        function updatePlayerUI() {
+            updateListenTogetherIcon(musicState.activeChatId);
+            updateElapsedTimeDisplay();
+            const titleEl = document.getElementById('music-player-song-title');
+            const artistEl = document.getElementById('music-player-artist');
+            const playPauseBtn = document.getElementById('music-play-pause-btn');
+            const chat = state.chats[musicState.activeChatId];
+            const charAvatarEl = document.getElementById('music-char-avatar');
+            const userAvatarEl = document.getElementById('music-user-avatar');
+            const albumCoverEl = document.getElementById('music-album-cover');
+            const avatarsContainer = document.getElementById('music-avatars-container');
+            const displayArea = document.getElementById('music-display-area');
+
+            // 1. 【核心修改】在这里判断是群聊还是单聊，并设置正确的头像
+            if (chat) {
+                // 如果是群聊
+                if (chat.isGroup) {
+                    // 左边的头像就用群头像
+                    charAvatarEl.src = chat.settings.groupAvatar || defaultGroupAvatar;
+                } else {
+                    // 否则（是单聊），就用角色的头像
+                    charAvatarEl.src = chat.settings.aiAvatar || defaultAvatar;
+                }
+                // 右边的用户头像保持不变
+                userAvatarEl.src = chat.settings.myAvatar || defaultAvatar;
+            }
+
+            // 2. 更新歌曲信息和封面 (不变)
+            if (musicState.currentIndex > -1 && musicState.playlist.length > 0) {
+                const track = musicState.playlist[musicState.currentIndex];
+                titleEl.textContent = track.name;
+                artistEl.textContent = track.artist;
+                albumCoverEl.src = track.cover || 'https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png';
+            } else {
+                titleEl.textContent = '请添加歌曲';
+                artistEl.textContent = '...';
+                albumCoverEl.src = 'https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png';
+            }
+
+            // 3. 控制播放/暂停按钮和头像闪烁 (不变)
+            playPauseBtn.textContent = musicState.isPlaying ? '❚❚' : '▶';
+            avatarsContainer.classList.toggle('flashing', musicState.isPlaying);
+
+            // 4. 控制唱片旋转和暂停 (不变)
+            albumCoverEl.classList.toggle('rotating', musicState.currentIndex > -1);
+            albumCoverEl.classList.toggle('paused', !musicState.isPlaying);
+
+            // 5. 默认显示歌曲封面 (不变)
+            if (displayArea) {
+                displayArea.classList.remove('show-lyrics');
+            }
+        }
+
 
         function updateElapsedTimeDisplay() { const hours = (musicState.totalElapsedTime / 3600).toFixed(1); document.getElementById('music-time-counter').textContent = `已经一起听了${hours}小时`; }
 
@@ -13463,27 +13774,42 @@ async function loadSong(index) {
     };
 }
 
+// ▼▼▼ 请用下面这【一整块】全新的代码，替换掉你旧的 playSong 和 togglePlayPause 两个函数 ▼▼▼
+
 async function playSong(index) {
-    // 先调用我们的新函数来加载好一切
     await loadSong(index);
-    // 然后，直接播放！
-    audioPlayer.play();
+    try {
+        await audioPlayer.play();
+        // ▼▼▼ 新增这两行 ▼▼▼
+        musicState.isPlaying = true; // 播放成功后，直接设置状态为 true
+        updatePlayerUI();           // 并立即更新UI
+        // ▲▲▲ 新增结束 ▲▲▲
+    } catch (error) {
+        console.error("音频播放失败:", error);
+        musicState.isPlaying = false; // 如果播放失败，也要确保状态正确
+        updatePlayerUI();
+    }
 }
 
 
-
+/**
+ * 【全新智能版】处理播放/暂停的函数
+ */
 function togglePlayPause() {
     if (audioPlayer.paused) {
-        // 如果播放器是暂停的，并且已经有选中的歌曲了
         if (musicState.currentIndex > -1) {
-            // 就直接调用 playSong 来播放当前这首歌
             playSong(musicState.currentIndex);
         }
     } else {
-        // 如果正在播放，就暂停它
         audioPlayer.pause();
+        // ▼▼▼ 新增这两行 ▼▼▼
+        musicState.isPlaying = false;
+        updatePlayerUI();
+        // ▲▲▲ 新增结束 ▲▲▲
     }
 }
+
+// ▲▲▲ 替换结束 ▲▲▲
 
 
         function playNext() { if (musicState.playlist.length === 0) return; let nextIndex; switch(musicState.playMode) { case 'random': nextIndex = Math.floor(Math.random() * musicState.playlist.length); break; case 'single': playSong(musicState.currentIndex); return; case 'order': default: nextIndex = (musicState.currentIndex + 1) % musicState.playlist.length; break; } playSong(nextIndex); }
@@ -20364,7 +20690,15 @@ document.getElementById('phone-screen').addEventListener('click', unlockAudioCon
     // ▲▲▲ 修改结束 ▲▲▲
 
 exitSelectionMode(); state.activeChatId = null; showScreen('chat-list-screen'); });
-            
+            // ▼▼▼ 在 init() 的事件监听器区域末尾，粘贴这段新代码 ▼▼▼
+            // 为歌曲封面/歌词区域绑定点击切换事件
+            document.getElementById('music-display-area').addEventListener('click', () => {
+                const displayArea = document.getElementById('music-display-area');
+                // 直接切换 .show-lyrics 这个类，CSS会自动处理显示/隐藏
+                displayArea.classList.toggle('show-lyrics');
+            });
+            // ▲▲▲ 新代码粘贴结束 ▲▲▲
+
                         document.getElementById('add-chat-btn').addEventListener('click', async () => { 
                 const name = await showCustomPrompt('创建新聊天', '请输入Ta的名字'); 
                 if (name && name.trim()) { 
@@ -20460,8 +20794,6 @@ document.getElementById('search-results-list').addEventListener('click', (e) => 
 // ▲▲▲ 新增事件绑定结束 ▲▲▲
 
             audioPlayer.addEventListener('ended', playNext);
-            audioPlayer.addEventListener('pause', () => { if(musicState.isActive) { musicState.isPlaying = false; updatePlayerUI(); } });
-            audioPlayer.addEventListener('play', () => { if(musicState.isActive) { musicState.isPlaying = true; updatePlayerUI(); } });
 
             const chatInput = document.getElementById('chat-input');
             // ▼▼▼ 找到 id="send-btn" 的 click 事件监听器 ▼▼▼
