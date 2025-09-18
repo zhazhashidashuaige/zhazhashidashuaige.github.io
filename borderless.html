@@ -6027,6 +6027,108 @@ input:checked + .slider:before {
 }
 
 /* ▲▲▲ 粘贴结束 ▲▲▲ */
+/* ▼▼▼ 【全新】字体预设功能样式 ▼▼▼ */
+
+#font-preset-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 卡槽之间的间距 */
+}
+
+.font-preset-slot {
+    background-color: #f9f9f9;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#phone-screen.dark-mode .font-preset-slot {
+    background-color: #1c1c1e;
+    border-color: #38383a;
+}
+
+.font-preset-slot.empty {
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+    border-style: dashed;
+}
+
+.font-preview-text {
+    font-size: 22px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    text-align: center;
+    min-height: 30px;
+    transition: font-family 0.3s ease;
+}
+
+#phone-screen.dark-mode .font-preview-text {
+    background-color: #2c2c2e;
+    color: #fff;
+}
+
+.font-preset-info {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.font-preset-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.preset-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.preset-btn.secondary {
+    background-color: #e9ecef;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+#phone-screen.dark-mode .preset-btn.secondary {
+    background-color: #3e3e42;
+    border-color: #545458;
+}
+
+.preset-btn.delete {
+    background-color: #ffdde5;
+    color: #ff3b30;
+    border: 1px solid #ffc2d1;
+    max-width: 80px; /* 让删除按钮窄一点 */
+    flex: 0 0 auto;
+}
+/* ▲▲▲ 新样式粘贴结束 ▲▲▲ */
+/* 【美化 V2】让后台活动设置的按钮更圆润、更立体 */
+#background-activity-details .form-button-secondary {
+    border-radius: 20px; /* 大幅增加圆角，形成胶囊形状 */
+    padding-top: 10px;   /* 增加顶部内边距，让按钮更高 */
+    padding-bottom: 10px;/* 增加底部内边距，让按钮更高 */
+    font-weight: 500;    /* 字体稍微加粗一点 */
+    transition: all 0.2s ease; /* 添加平滑的过渡效果 */
+}
+
+/* 为按钮添加一个微妙的点击效果 */
+#background-activity-details .form-button-secondary:active {
+    transform: scale(0.96); /* 点击时轻微缩小 */
+    opacity: 0.8;         /* 点击时稍微变淡 */
+}
 
 /* ▲▲▲ 样式添加结束 ▲▲▲ */
 
@@ -6239,16 +6341,18 @@ input:checked + .slider:before {
     </div>
 
     <div class="form-group">
-        <label>为选中角色设置频率</label>
-        <div style="display: flex; gap: 10px;">
-            <button class="form-button-secondary bg-freq-btn" data-freq="low" style="flex:1; margin:0; border-color: #28a745;">低</button>
-            <button class="form-button-secondary bg-freq-btn" data-freq="medium" style="flex:1; margin:0; border-color: #fd7e14;">中</button>
-            <button class="form-button-secondary bg-freq-btn" data-freq="high" style="flex:1; margin:0; border-color: #dc3545;">高</button>
-        </div>
-        <p style="font-size: 12px; font-weight: normal; color: #999; margin-top: 8px;">
-            频率越高，角色主动行为的概率越大，费用也越高。
-        </p>
+    <label>为选中角色设置频率</label>
+    <div style="display: flex; gap: 10px;">
+        <button class="form-button-secondary bg-freq-btn" data-freq="low" style="flex:1; margin:0; border-color: #28a745;">低</button>
+        <button class="form-button-secondary bg-freq-btn" data-freq="medium" style="flex:1; margin:0; border-color: #fd7e14;">中</button>
+        <button class="form-button-secondary bg-freq-btn" data-freq="high" style="flex:1; margin:0; border-color: #dc3545;">高</button>
+        <!-- ▼▼▼ 就是新增了这个“关闭”按钮 ▼▼▼ -->
+        <button class="form-button-secondary bg-freq-btn" data-freq="none" style="flex:1; margin:0; border-color: #aaa;">关闭</button>
     </div>
+    <p style="font-size: 12px; font-weight: normal; color: #999; margin-top: 8px;">
+        频率越高，角色主动行为的概率越大，费用也越高。
+    </p>
+</div>
 </div>
 <!-- ▲▲▲ 全新的后台活动设置区结束 ▲▲▲ -->
 
@@ -6758,28 +6862,32 @@ input:checked + .slider:before {
 
 <div id="font-settings-screen" class="screen">
     <div class="header">
-        <span class="back-btn" onclick="showScreen('home-screen')">‹</span>
-        <span>字体设置</span>
-        <span style="width: 30px;"></span>
-    </div>
-    <div class="form-container">
-        <div class="form-group">
-            <label for="font-url-input">字体文件URL (.ttf, .otf, .woff等)</label>
-            <input type="text" id="font-url-input" placeholder="https://..../font.ttf">
+    <span class="back-btn" onclick="showScreen('home-screen')">‹</span>
+    <span>字体预设</span>
+    <span style="width: 30px;"></span> <!-- 保留这个占位符，让标题能完美居中 -->
+</div>
+    <div class="form-container" style="gap: 20px;">
+        <!-- 字体预设卡槽的容器 -->
+        <div id="font-preset-container">
+            <!-- 5个卡槽将由JavaScript动态生成在这里 -->
         </div>
 
-        <div class="form-group">
-            <label>实时预览</label>
-<div id="font-preview">
+        <!-- 全局字体预览区 -->
+        <div class="form-group" style="width:100%;">
+            <label>当前全局字体预览</label>
+            <div id="font-preview">
                 <p style="font-size: 20px; margin: 0 0 10px 0;">你好世界 Hello World</p>
-                <p style="margin: 0;">这是字体预览效果，12345。</p>
+                <p style="margin: 0;">这是全局字体预览效果，12345。</p>
             </div>
         </div>
 
-        <button class="form-button" id="save-font-btn">保存并应用</button>
         <button class="form-button form-button-secondary" id="reset-font-btn">恢复默认字体</button>
     </div>
 </div>
+
+<!-- 这个是隐藏的文件选择器，用来处理本地上传 -->
+<input type="file" id="font-preset-local-upload" accept=".ttf,.otf,.woff,.woff2" style="display: none;">
+
 
 <!-- ▼▼▼ 【全新】“查角色手机”功能的所有HTML界面 (V3终极版) ▼▼▼ -->
 
@@ -7334,7 +7442,7 @@ input:checked + .slider:before {
                 <div class="avatar-upload">
                     <img id="preset-avatar-preview">
                     <button onclick="document.getElementById('preset-avatar-input').click()">上传头像</button>
-                    <!-- 【新增】给这个按钮一个ID -->
+                    <!-- 【新增】给这个按钮一个ID，方便我们控制它 -->
                     <button id="persona-editor-change-frame-btn" class="change-frame-btn" data-type="member">更换头像框</button>
                     <input type="file" id="preset-avatar-input" accept="image/*">
                 </div>
@@ -8858,13 +8966,13 @@ function showCustomPrompt(title, placeholder, initialValue = '', type = 'text', 
         // 2. 数据库结构定义
         // ===================================================================
 
-db.version(28).stores({ 
+db.version(29).stores({ 
 chats: '&id, isGroup, groupId, isPinned, characterPhoneData',
     apiConfig: '&id', 
     globalSettings: '&id, activeThemeId', 
     userStickers: '&id, url, name',
-    worldBooks: '&id, name, categoryId', // <-- 【核心修改1】在这里添加 categoryId
-    worldBookCategories: '++id, name',    // <-- 【核心修改2】新增这个表
+    worldBooks: '&id, name, categoryId', 
+    worldBookCategories: '++id, name',
     musicLibrary: '&id', 
     personaPresets: '&id',
     qzoneSettings: '&id',
@@ -8878,17 +8986,222 @@ chats: '&id, isGroup, groupId, isPinned, characterPhoneData',
     customAvatarFrames: '&id, name, url',   
     themes: '++id, name, css',
     apiPresets: '++id, name, proxyUrl, apiKey',
-    bubbleStylePresets: '++id, name, css' // <-- 【核心新增】在这里添加气泡预设的“抽屉”
+    bubbleStylePresets: '++id, name, css',
+    fontPresets: '&id, name, url' // <-- 就是在这里添加了新的一行！
 });
 
-        // ===================================================================
-        // 3. 所有功能函数定义
-        // ===================================================================
 // ===================================================================
 // 3. 所有功能函数定义
 // ===================================================================
 
 // ▼▼▼ 从这里开始，粘贴所有新代码 ▼▼▼
+// ▼▼▼ 【全新】字体预设功能核心函数 ▼▼▼
+
+/**
+ * 渲染字体预设的5个卡槽
+ */
+async function renderFontPresets() {
+    const container = document.getElementById('font-preset-container');
+    container.innerHTML = ''; // 清空旧内容
+
+    // 从数据库读取所有已保存的预设
+    const presets = await db.fontPresets.toArray();
+
+    // 循环5次，创建5个卡槽
+    for (let i = 0; i < 5; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'font-preset-slot';
+        
+        const preset = presets[i];
+
+        if (preset) {
+            // --- 如果这个卡槽有数据 ---
+            slot.innerHTML = `
+                <div class="font-preview-text" data-preset-id="${preset.id}">Abc 你好</div>
+                <div class="font-preset-info">名称: ${preset.name}</div>
+                <div class="font-preset-actions">
+                    <button class="preset-btn apply-btn" data-preset-id="${preset.id}">应用</button>
+                    <button class="preset-btn delete-btn delete" data-preset-id="${preset.id}">删除</button>
+                </div>
+            `;
+            // 加载字体用于预览
+            loadFontForPreview(preset);
+        } else {
+            // --- 如果这个卡槽是空的 ---
+            slot.classList.add('empty');
+            slot.innerHTML = `
+                <div class="font-preset-info">卡槽 ${i + 1} 为空</div>
+                <div class="font-preset-actions">
+                    <button class="preset-btn secondary upload-url-btn" data-slot-index="${i}">URL上传</button>
+                    <button class="preset-btn secondary upload-local-btn" data-slot-index="${i}">本地上传</button>
+                </div>
+            `;
+        }
+        container.appendChild(slot);
+    }
+    
+    // 为所有新生成的按钮绑定事件
+    addFontPresetButtonListeners();
+}
+
+/**
+ * 【终极修复版】为单个预设加载字体以供预览
+ * @param {object} preset - 字体预设对象 {id, name, url}
+ */
+function loadFontForPreview(preset) {
+    const styleId = `font-style-${preset.id}`;
+    // 检查这个字体的专属样式表是否已经创建，如果已创建则无需重复操作
+    if (document.getElementById(styleId)) return;
+
+    // 1. 创建一个新的 <style> 标签，专门用于这一个字体预设
+    const style = document.createElement('style');
+    style.id = styleId;
+    
+    // 2. 在这个样式表里，我们同时定义 @font-face 和应用该字体的规则
+    //    我们用一个非常具体的选择器，确保只影响对应的那个预览框
+    style.innerHTML = `
+        @font-face {
+            font-family: 'preset-${preset.id}';
+            src: url('${preset.url}');
+            font-display: swap;
+        }
+
+        /* 
+         * 核心修复：直接创建一个CSS规则来应用字体，
+         * 它的优先级高于通过 .style.fontFamily 设置的内联样式，
+         * 也高于全局的 body 字体样式。
+        */
+        .font-preview-text[data-preset-id="${preset.id}"] {
+            font-family: 'preset-${preset.id}', sans-serif !important;
+        }
+    `;
+    
+    // 3. 将这个全新的、独立的样式表添加到文档头部
+    document.head.appendChild(style);
+}
+
+/**
+ * 为预设卡槽中的所有按钮统一添加事件监听器
+ */
+function addFontPresetButtonListeners() {
+    document.querySelectorAll('.upload-url-btn').forEach(btn => {
+        btn.onclick = () => handleUploadFontUrl(parseInt(btn.dataset.slotIndex));
+    });
+    document.querySelectorAll('.upload-local-btn').forEach(btn => {
+        btn.onclick = () => handleUploadFontLocal(parseInt(btn.dataset.slotIndex));
+    });
+    document.querySelectorAll('.apply-btn').forEach(btn => {
+        btn.onclick = () => applyFontPreset(btn.dataset.presetId);
+    });
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.onclick = () => deleteFontPreset(btn.dataset.presetId);
+    });
+}
+
+/**
+ * 处理通过URL上传字体
+ * @param {number} slotIndex - 卡槽的索引 (0-4)
+ */
+async function handleUploadFontUrl(slotIndex) {
+    const url = await showCustomPrompt("字体URL", "请输入字体的网络链接(.ttf, .otf等)");
+    if (!url || !url.trim().startsWith('http')) {
+        if (url !== null) alert("请输入一个有效的URL！");
+        return;
+    }
+    const name = await showCustomPrompt("字体命名", "请为这个字体起个名字");
+    if (!name || !name.trim()) {
+        if (name !== null) alert("名字不能为空！");
+        return;
+    }
+    await saveFontPreset(slotIndex, name.trim(), url.trim());
+}
+
+/**
+ * 处理通过本地文件上传字体
+ * @param {number} slotIndex - 卡槽的索引 (0-4)
+ */
+function handleUploadFontLocal(slotIndex) {
+    const input = document.getElementById('font-preset-local-upload');
+    // 绑定一个一次性的change事件
+    input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const name = await showCustomPrompt("字体命名", "请为这个字体起个名字", file.name.replace(/\.[^/.]+$/, ""));
+        if (!name || !name.trim()) {
+            if (name !== null) alert("名字不能为空！");
+            return;
+        }
+
+        // 使用FileReader将字体文件转为Base64 Data URL
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            await saveFontPreset(slotIndex, name.trim(), event.target.result);
+        };
+        reader.readAsDataURL(file);
+    };
+    input.click(); // 触发文件选择框
+}
+
+/**
+ * 将新的字体预设保存到数据库
+ * @param {number} slotIndex - 卡槽索引
+ * @param {string} name - 字体名称
+ * @param {string} url - 字体URL (网络或Base64)
+ */
+async function saveFontPreset(slotIndex, name, url) {
+    const presets = await db.fontPresets.toArray();
+    const newPreset = { id: 'font_' + Date.now(), name, url };
+
+    // 将新预设插入到指定位置
+    presets.splice(slotIndex, 0, newPreset);
+    // 只保留前5个
+    const presetsToSave = presets.slice(0, 5);
+
+    // 清空旧数据并批量存入新数据
+    await db.fontPresets.clear();
+    await db.fontPresets.bulkAdd(presetsToSave);
+
+    await renderFontPresets(); // 刷新UI
+    alert(`字体 "${name}" 已成功保存到卡槽 ${slotIndex + 1}！`);
+}
+
+/**
+ * 删除一个字体预设
+ * @param {string} presetId - 要删除的预设的ID
+ */
+async function deleteFontPreset(presetId) {
+    const preset = await db.fontPresets.get(presetId);
+    if (!preset) return;
+    const confirmed = await showCustomConfirm("确认删除", `确定要删除字体 "${preset.name}" 吗？`, { confirmButtonClass: 'btn-danger' });
+    if (confirmed) {
+        await db.fontPresets.delete(presetId);
+        
+        // 从DOM中移除对应的预览样式
+        const styleTag = document.getElementById(`font-style-${presetId}`);
+        if (styleTag) styleTag.remove();
+
+        await renderFontPresets();
+    }
+}
+
+/**
+ * 应用一个字体预设为全局字体
+ * @param {string} presetId - 要应用的预设的ID
+ */
+async function applyFontPreset(presetId) {
+    const preset = await db.fontPresets.get(presetId);
+    if (preset) {
+        // 调用你已有的全局字体应用函数
+        applyCustomFont(preset.url, false);
+        // 保存到全局设置
+        state.globalSettings.fontUrl = preset.url;
+        await db.globalSettings.put(state.globalSettings);
+        alert(`已将全局字体更换为 "${preset.name}"！`);
+    }
+}
+
+// ▲▲▲ 新功能函数粘贴结束 ▲▲▲
 
 /**
  * 【总入口】处理用户选择的角色卡文件
@@ -9216,9 +9529,14 @@ function getEventCoords(e) {
             if (screenToShow) screenToShow.classList.add('active');
             if (screenId === 'chat-interface-screen') window.updateListenTogetherIconProxy(state.activeChatId);
             if (screenId === 'font-settings-screen') {
-                document.getElementById('font-url-input').value = state.globalSettings.fontUrl || '';
+                // 更新全局字体预览
+                document.getElementById('font-preview').style.fontFamily = '';
                 applyCustomFont(state.globalSettings.fontUrl || '', true);
+                
+                // 渲染5个预设卡槽
+                renderFontPresets();
             }
+
         }
         window.updateListenTogetherIconProxy = () => {};
 
@@ -9661,7 +9979,7 @@ function displayFilteredFavorites(items) {
             document.getElementById('switch-to-image-mode').click();
         }
 
-// ▼▼▼ 用这个【已包含 memories】的版本，完整替换旧的 exportBackup 函数 ▼▼▼
+// ▼▼▼ 粘贴这个唯一的、经典的导出函数 ▼▼▼
 async function exportBackup() {
     try {
         const backupData = {
@@ -9669,60 +9987,16 @@ async function exportBackup() {
             timestamp: Date.now()
         };
 
-        const [
-            chats, worldBooks, userStickers, apiConfig, globalSettings,
-            personaPresets, musicLibrary, qzoneSettings, qzonePosts,
-            qzoneAlbums, qzonePhotos, favorites, qzoneGroups,
-            memories,
-                worldBookCategories,
-    callRecords,
-    customAvatarFrames, 
-            themes,
-apiPresets,
-bubbleStylePresets
-        ] = await Promise.all([
-            db.chats.toArray(),
-            db.worldBooks.toArray(),
-            db.userStickers.toArray(),
-            db.apiConfig.get('main'),
-            db.globalSettings.get('main'),
-            db.personaPresets.toArray(),
-            db.musicLibrary.get('main'),
-            db.qzoneSettings.get('main'),
-            db.qzonePosts.toArray(),
-            db.qzoneAlbums.toArray(),
-            db.qzonePhotos.toArray(),
-            db.favorites.toArray(),
-            db.qzoneGroups.toArray(),
-                        db.memories.toArray(),
-            db.worldBookCategories.toArray(),
-    db.callRecords.toArray(),       
-    db.customAvatarFrames.toArray(),
+        // 从数据库获取所有表的数据
+        const tables = db.tables.map(table => table.toArray());
+        const results = await Promise.all(tables);
 
-            db.themes.toArray(),
-
-db.apiPresets.toArray(),
-
-db.bubbleStylePresets.toArray()
-]);
-
-        Object.assign(backupData, {
-            chats, worldBooks, userStickers, apiConfig, globalSettings,
-            personaPresets, musicLibrary, qzoneSettings, qzonePosts,
-            qzoneAlbums, qzonePhotos, favorites, qzoneGroups,
-            memories,
-                worldBookCategories,
-    callRecords,          
-    customAvatarFrames, 
-            themes,
-apiPresets,
-bubbleStylePresets
-});
+        // 将表名和数据对应起来
+        db.tables.forEach((table, index) => {
+            backupData[table.name] = results[index];
+        });
         
-        const blob = new Blob(
-            [JSON.stringify(backupData, null, 2)], 
-            { type: 'application/json' }
-        );
+        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = Object.assign(document.createElement('a'), {
             href: url,
@@ -9738,6 +10012,8 @@ bubbleStylePresets
         await showCustomAlert('导出失败', `发生了一个错误: ${error.message}`);
     }
 }
+// ▲▲▲ 粘贴结束 ▲▲▲
+
 
 // ▼▼▼ 用这个【已包含 memories】的版本，完整替换旧的 importBackup 函数 ▼▼▼
 async function importBackup(file) {
@@ -9824,13 +10100,24 @@ if (Array.isArray(data.customAvatarFrames)) await db.customAvatarFrames.bulkPut(
         }
 
         async function resetToDefaultFont() {
+            // 1. 清除全局字体样式
             dynamicFontStyle.innerHTML = ''; 
+            
+            // 2. 更新并保存设置
             state.globalSettings.fontUrl = '';
             await db.globalSettings.put(state.globalSettings);
-            document.getElementById('font-url-input').value = '';
-            document.getElementById('font-preview').style.fontFamily = '';
+            
+            // 3. 【核心修复】明确地将全局预览区的字体也恢复为默认
+            const globalPreview = document.getElementById('font-preview');
+            globalPreview.style.fontFamily = ''; // 移除内联样式
+            
+            // 4. 应用一下空的字体设置，确保所有地方都恢复
+            applyCustomFont('', true);
+            
             alert('已恢复默认字体。');
         }
+
+
 
 async function loadAllDataFromDB() {
     // ▼▼▼ 【核心修改在这里】 ▼▼▼
@@ -9967,7 +10254,8 @@ state.globalSettings = globalSettings || {
     lockscreenWallpaper: 'linear-gradient(135deg, #764ba2, #667eea)', // <-- 新增：默认锁屏壁纸
     password: '', // <-- 新增：默认无密码
     fontUrl: '', 
-    enableBackgroundActivity: false, 
+    enableBackgroundActivity: false,
+    backgroundActivityConfig: {}, 
     backgroundActivityInterval: 60,
     blockCooldownHours: 1,
     backgroundActivityConfig: {}, // <-- 【【【在这里添加这一行新代码】】】
@@ -10061,14 +10349,17 @@ function parseAiResponse(content) {
     return [{ type: 'text', content: content }];
 }
 
-        function renderApiSettings() { document.getElementById('proxy-url').value = state.apiConfig.proxyUrl || ''; document.getElementById('api-key').value = state.apiConfig.apiKey || ''; 
-        
-    // ▼▼▼ 新增这行 ▼▼▼
+        // ▼▼▼ 用这个【全新的函数】替换旧的 renderApiSettings 函数 ▼▼▼
+function renderApiSettings() { 
+    document.getElementById('proxy-url').value = state.apiConfig.proxyUrl || ''; 
+    document.getElementById('api-key').value = state.apiConfig.apiKey || ''; 
     document.getElementById('background-activity-switch').checked = state.globalSettings.enableBackgroundActivity || false;
     document.getElementById('background-interval-input').value = state.globalSettings.backgroundActivityInterval || 60;
     document.getElementById('block-cooldown-input').value = state.globalSettings.blockCooldownHours || 1;
+    renderApiPresetSelector();
+    renderBackgroundFrequencySelector(); // <-- 【【【核心修改在这里】】】
+// ▲▲▲ 替换结束 ▲▲▲
 
-   renderApiPresetSelector(); // 👈 在这里添加这一行
    function renderApiSettings() { 
     document.getElementById('proxy-url').value = state.apiConfig.proxyUrl || ''; 
     document.getElementById('api-key').value = state.apiConfig.apiKey || ''; 
@@ -10123,6 +10414,48 @@ function renderBackgroundFrequencySelector() {
 // ▲▲▲ 新函数粘贴结束 ▲▲▲
 
         window.renderApiSettingsProxy = renderApiSettings;
+        // ▼▼▼ 【全新】粘贴这个完整的函数 ▼▼▼
+/**
+ * 渲染后台活动的角色选择和频率设置UI
+ */
+function renderBackgroundFrequencySelector() {
+    const container = document.getElementById('background-activity-char-list');
+    const detailsContainer = document.getElementById('background-activity-details');
+    const masterSwitch = document.getElementById('background-activity-switch');
+
+    // 根据总开关的状态，决定是否显示详细设置
+    detailsContainer.style.display = masterSwitch.checked ? 'block' : 'none';
+    
+    container.innerHTML = ''; // 清空旧列表
+    const singleChats = Object.values(state.chats).filter(chat => !chat.isGroup);
+
+    if (singleChats.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">还没有可以设置的角色</p>';
+        return;
+    }
+
+    const config = state.globalSettings.backgroundActivityConfig || {};
+
+    singleChats.forEach(chat => {
+        const freq = config[chat.id] || 'none'; // 获取当前角色的频率设置
+        let badgeHtml = '';
+        if (freq !== 'none') {
+            const freqText = { low: '低', medium: '中', high: '高' }[freq];
+            badgeHtml = `<span class="char-freq-badge ${freq}">${freqText}</span>`;
+        }
+
+        const item = document.createElement('div');
+        item.className = 'char-list-item';
+        item.innerHTML = `
+            <input type="checkbox" class="bg-char-checkbox" data-chat-id="${chat.id}">
+            <span class="char-name">${chat.name}</span>
+            ${badgeHtml}
+        `;
+        container.appendChild(item);
+    });
+}
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
+
 
 // ▼▼▼ 请用这个【全新修正版】替换旧的 renderChatList 函数 ▼▼▼
 async function renderChatList() {
@@ -13013,38 +13346,51 @@ if (musicState.currentIndex === -1 && musicState.playlist.length > 0) {
 
         function applyPersonaPreset(presetId) { const preset = state.personaPresets.find(p => p.id === presetId); if (preset) { document.getElementById('my-avatar-preview').src = preset.avatar; document.getElementById('my-persona').value = preset.persona; } closePersonaLibrary(); }
 
-// ▼▼▼ 从这里开始替换 ▼▼▼
+// ▼▼▼ 用这个全新的函数，完整替换旧的 openPersonaEditorForCreate 函数 ▼▼▼
 function openPersonaEditorForCreate() { 
     editingPersonaPresetId = null; 
+    
     document.getElementById('persona-editor-title').textContent = '添加人设预设'; 
     document.getElementById('preset-avatar-preview').src = defaultAvatar; 
     document.getElementById('preset-persona-input').value = ''; 
     
-    // 【核心】控制UI显隐
+    // 【核心逻辑】根据用户人设模式，显隐特定UI元素
     document.getElementById('npc-editor-name-group').style.display = 'none';
     document.getElementById('persona-editor-change-frame-btn').style.display = 'inline-block';
 
-    personaEditorModal.classList.add('visible'); 
+    // 【【【这就是您代码中的正确做法！】】】
+    // 我们直接覆盖保存按钮的 onclick 事件，强制它只执行保存用户人设的函数
+    document.getElementById('save-persona-preset-btn').onclick = savePersonaPreset;
+
+    document.getElementById('persona-editor-modal').classList.add('visible'); 
 }
-// ▲▲▲ 替换到这里结束 ▲▲▲
+// ▲▲▲ 替换结束 ▲▲▲
 
 
-// ▼▼▼ 从这里开始替换 ▼▼▼
+
+// ▼▼▼ 用这个全新的函数，完整替换旧的 openPersonaEditorForEdit 函数 ▼▼▼
 function openPersonaEditorForEdit() { 
     const preset = state.personaPresets.find(p => p.id === editingPersonaPresetId); 
     if (!preset) return; 
+
     document.getElementById('persona-editor-title').textContent = '编辑人设预设'; 
     document.getElementById('preset-avatar-preview').src = preset.avatar; 
     document.getElementById('preset-persona-input').value = preset.persona; 
     
-    // 【核心】控制UI显隐
+    // 【核心逻辑】根据用户人设模式，显隐特定UI元素
     document.getElementById('npc-editor-name-group').style.display = 'none';
     document.getElementById('persona-editor-change-frame-btn').style.display = 'inline-block';
 
+    // 【【【这就是您代码中的正确做法！】】】
+    // 我们直接覆盖保存按钮的 onclick 事件，强制它只执行保存用户人设的函数
+    document.getElementById('save-persona-preset-btn').onclick = savePersonaPreset;
+    
     presetActionsModal.classList.remove('visible'); 
-    personaEditorModal.classList.add('visible'); 
+    document.getElementById('persona-editor-modal').classList.add('visible'); 
 }
-// ▲▲▲ 替换到这里结束 ▲▲▲
+// ▲▲▲ 替换结束 ▲▲▲
+
+
 
 
 
@@ -13300,9 +13646,6 @@ function stopBackgroundSimulation() {
 }
 // ▲▲▲ 粘贴结束 ▲▲▲
 
-/**
- * 这是模拟器的“心跳”，每次定时器触发时运行
- */
 // ▼▼▼ 【全新】用这个函数完整替换旧的 runBackgroundSimulationTick ▼▼▼
 /**
  * 这是模拟器的“心跳”，每次定时器触发时运行
@@ -13359,6 +13702,7 @@ function runBackgroundSimulationTick() {
     });
 }
 // ▲▲▲ 替换结束 ▲▲▲
+
 
 
 async function triggerInactiveAiAction(chatId) {
@@ -16960,33 +17304,38 @@ function renderNpcList() {
  * 【V2 - 完整版】打开NPC编辑器（用于新建或编辑）
  * @param {string|null} npcId - 如果是编辑，则传入NPC的ID；如果是新建，则为null
  */
+// ▼▼▼ 用这个全新的函数，完整替换旧的 openNpcEditor 函数 ▼▼▼
 async function openNpcEditor(npcId = null) {
     editingNpcId = npcId;
+    const chat = state.chats[state.activeChatId];
     let npc = { name: '', persona: '', avatar: defaultGroupMemberAvatar };
-    const modal = document.getElementById('persona-editor-modal');
-    const nameGroup = document.getElementById('npc-editor-name-group');
-    const frameBtn = document.getElementById('persona-editor-change-frame-btn');
-
+    
     if (npcId) {
-        const chat = state.chats[state.activeChatId];
-        npc = chat.npcLibrary.find(n => n.id === npcId) || npc;
+        npc = (chat.npcs || []).find(n => n.id === npcId) || npc;
         document.getElementById('persona-editor-title').textContent = `编辑NPC: ${npc.name}`;
     } else {
         document.getElementById('persona-editor-title').textContent = '添加新NPC';
     }
-
+    
     // 填充编辑器内容
     document.getElementById('npc-editor-name-input').value = npc.name;
     document.getElementById('preset-avatar-preview').src = npc.avatar;
     document.getElementById('preset-persona-input').value = npc.persona;
+    
+    // 【核心逻辑】根据NPC模式，显隐特定UI元素
+    document.getElementById('npc-editor-name-group').style.display = 'block';
+    document.getElementById('persona-editor-change-frame-btn').style.display = 'none';
 
-    // 控制UI元素的显隐
-    nameGroup.style.display = 'block'; // 显示NPC名字输入框
-    frameBtn.style.display = 'none';   // 【核心】隐藏头像框按钮
+    // 【【【这就是您代码中的正确做法！】】】
+    // 我们直接覆盖保存按钮的 onclick 事件，强制它只执行保存NPC的函数
+    document.getElementById('save-persona-preset-btn').onclick = saveNpc;
 
-    modal.classList.add('visible');
+    // 最后才显示弹窗
+    document.getElementById('persona-editor-modal').classList.add('visible');
 }
-// ▲▲▲ 替换到这里结束 ▲▲▲
+// ▲▲▲ 替换结束 ▲▲▲
+
+
 
 
 
@@ -17031,6 +17380,7 @@ async function saveNpc() {
     closePersonaEditor(); // 复用关闭编辑器的函数
 }
 // ▲▲▲ 替换到这里结束 ▲▲▲
+
 
 /**
  * 删除一个NPC
@@ -19970,10 +20320,17 @@ if (newEnableState && !oldEnableState) {
     }
 }
 
+// 找到这几行：
 state.globalSettings.enableBackgroundActivity = newEnableState;
 state.globalSettings.backgroundActivityInterval = parseInt(intervalInput.value) || 60;
 state.globalSettings.blockCooldownHours = parseFloat(document.getElementById('block-cooldown-input').value) || 1;
+
+// 在它们下方，粘贴这行新代码：
+state.globalSettings.backgroundActivityConfig = state.globalSettings.backgroundActivityConfig || {}; // <-- 就是这行
+
+// 然后才是原来的保存语句
 await db.globalSettings.put(state.globalSettings);
+
 
 // 动态启动或停止模拟器
 stopBackgroundSimulation();
@@ -20538,17 +20895,8 @@ document.getElementById('waimai-confirm-btn').addEventListener('click', async ()
             document.getElementById('close-persona-library-btn').addEventListener('click', closePersonaLibrary);
             document.getElementById('add-persona-preset-btn').addEventListener('click', openPersonaEditorForCreate);
             document.getElementById('cancel-persona-editor-btn').addEventListener('click', closePersonaEditor);
-// ▼▼▼ 从这里开始替换 ▼▼▼
-document.getElementById('save-persona-preset-btn').addEventListener('click', () => {
-    // 通过检查“NPC名字”输入框是否可见，来判断当前模式
-    const isNpcMode = document.getElementById('npc-editor-name-group').style.display === 'block';
-    
-    if (isNpcMode) {
-        saveNpc();
-    } else {
-        savePersonaPreset(); // 如果不是NPC模式，就执行原来的人设保存逻辑
-    }
-});
+
+
 // ▲▲▲ 替换到这里结束 ▲▲▲
 
 
@@ -20602,16 +20950,6 @@ document.getElementById('selection-delete-btn').addEventListener('click', async 
 });
 // ▲▲▲ 替换结束 ▲▲▲
 
-            const fontUrlInput = document.getElementById('font-url-input');
-            fontUrlInput.addEventListener('input', () => applyCustomFont(fontUrlInput.value.trim(), true));
-            document.getElementById('save-font-btn').addEventListener('click', async () => {
-                const newFontUrl = fontUrlInput.value.trim();
-                if (!newFontUrl) { alert("请输入有效的字体URL。"); return; }
-                applyCustomFont(newFontUrl, false);
-                state.globalSettings.fontUrl = newFontUrl;
-                await db.globalSettings.put(state.globalSettings);
-                alert('字体已保存并应用！');
-            });
             document.getElementById('reset-font-btn').addEventListener('click', resetToDefaultFont);
 
             document.querySelectorAll('#chat-list-bottom-nav .nav-item').forEach(item => { item.addEventListener('click', () => switchToChatListView(item.dataset.view)); });
@@ -22558,6 +22896,61 @@ document.getElementById('search-results-list').addEventListener('click', (e) => 
     });
     
     // ▲▲▲ 新事件绑定结束 ▲▲▲
+// ▼▼▼ 【全新】粘贴这整块事件监听器代码 ▼▼▼
+// --- 后台活动设置界面的事件绑定 ---
+
+// 1. 总开关的事件
+document.getElementById('background-activity-switch').addEventListener('change', () => {
+    // 每次点击总开关，都重新渲染一次详细设置区（它会根据开关状态自动显示或隐藏）
+    renderBackgroundFrequencySelector();
+});
+
+// 2. 全选按钮
+document.getElementById('bg-select-all-chars').addEventListener('click', () => {
+    document.querySelectorAll('.bg-char-checkbox').forEach(checkbox => {
+        checkbox.checked = true;
+    });
+});
+
+// 3. 全不选按钮
+document.getElementById('bg-deselect-all-chars').addEventListener('click', () => {
+    document.querySelectorAll('.bg-char-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+});
+
+// 4. 为四个频率按钮（低、中、高、关闭）绑定事件 (使用事件委托)
+document.querySelector('#background-activity-details').addEventListener('click', (e) => {
+    if (e.target.classList.contains('bg-freq-btn')) {
+        const freq = e.target.dataset.freq;
+        const selectedCheckboxes = document.querySelectorAll('.bg-char-checkbox:checked');
+        
+        if (selectedCheckboxes.length === 0) {
+            alert('请先选择至少一个角色！');
+            return;
+        }
+
+        const config = state.globalSettings.backgroundActivityConfig || {};
+        selectedCheckboxes.forEach(checkbox => {
+            const chatId = checkbox.dataset.chatId;
+            if (freq === 'none') {
+                delete config[chatId];
+            } else {
+                config[chatId] = freq;
+            }
+        });
+        
+        state.globalSettings.backgroundActivityConfig = config;
+        
+        // 重新渲染列表以更新徽章
+        renderBackgroundFrequencySelector();
+
+        const freqTextMap = {low:'低', medium:'中', high:'高', none: '关闭'};
+        const freqText = freqTextMap[freq];
+        alert(`已为 ${selectedCheckboxes.length} 个角色将后台活动频率设为 "${freqText}"`);
+    }
+});
+// ▲▲▲ 新事件绑定结束 ▲▲▲
 
 document.getElementById('api-preset-select').addEventListener('change', handleApiPresetSelectChange);
 document.getElementById('manage-api-presets-btn').addEventListener('click', openApiPresetManager);
@@ -22883,15 +23276,8 @@ document.getElementById('back-from-npc-management').addEventListener('click', ()
 // NPC管理界面的“+”按钮
 document.getElementById('add-new-npc-btn').addEventListener('click', () => openNpcEditor(null));
 
-// 【核心修改】修改人设编辑器的保存按钮，让它也能保存NPC
-document.getElementById('save-persona-preset-btn').addEventListener('click', () => {
-    // 通过检查editingNpcId是否被赋值，来判断当前是在保存“人设预设”还是“NPC”
-    if (editingNpcId !== null || document.getElementById('persona-editor-modal').dataset.npcName) {
-        saveNpc();
-    } else {
-        savePersonaPreset(); // 如果不是在编辑NPC，就执行原来的保存人设逻辑
-    }
-});
+
+
 // ▼▼▼ 【全新】粘贴这整块事件监听器代码 ▼▼▼
 // --- 后台活动设置界面的事件绑定 ---
 
@@ -22929,17 +23315,37 @@ document.querySelector('#background-activity-details').addEventListener('click',
         const config = state.globalSettings.backgroundActivityConfig || {};
         selectedCheckboxes.forEach(checkbox => {
             const chatId = checkbox.dataset.chatId;
-            config[chatId] = freq;
+            // ▼▼▼ 核心修改在这里 ▼▼▼
+            // 如果点击的是“关闭”按钮 (data-freq="none")
+            if (freq === 'none') {
+                // 我们就从配置里删除这个角色的设置
+                delete config[chatId];
+            } else {
+                // 否则，正常设置频率
+                config[chatId] = freq;
+            }
+            // ▲▲▲ 修改结束 ▲▲▲
         });
         
         state.globalSettings.backgroundActivityConfig = config;
         
-        // 应用后，立刻重新渲染列表，让用户看到最新的频率标签
         renderBackgroundFrequencySelector();
-        alert(`已为 ${selectedCheckboxes.length} 个角色设置频率为 "${{low:'低', medium:'中', high:'高'}[freq]}"`);
+
+        // ▼▼▼ 另一个核心修改在这里，让提示更友好 ▼▼▼
+        const freqTextMap = {low:'低', medium:'中', high:'高', none: '关闭'};
+        const freqText = freqTextMap[freq];
+        alert(`已为 ${selectedCheckboxes.length} 个角色将后台活动频率设为 "${freqText}"`);
+        // ▲▲▲ 修改结束 ▲▲▲
     }
 });
-// ▲▲▲ 新代码粘贴结束 ▲▲▲
+// ▼▼▼ 在 init() 函数末尾的 init(); 前面添加 ▼▼▼
+if (state.globalSettings.enableBackgroundActivity) {
+    startBackgroundSimulation();
+    console.log("后台活动模拟已自动启动。");
+}
+// ▲▲▲ 添加结束 ▲▲▲
+
+
 
 // ▲▲▲ 新事件绑定结束 ▲▲▲
 
