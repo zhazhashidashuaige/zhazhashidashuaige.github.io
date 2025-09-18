@@ -6129,6 +6129,47 @@ input:checked + .slider:before {
     transform: scale(0.96); /* 点击时轻微缩小 */
     opacity: 0.8;         /* 点击时稍微变淡 */
 }
+/* ▼▼▼ 【全新】BGM搜索结果弹窗样式 ▼▼▼ */
+
+.search-result-item {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+#phone-screen.dark-mode .search-result-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-result-item .title {
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text-primary);
+}
+
+.search-result-item .artist {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.search-result-item .source {
+    font-size: 10px;
+    color: var(--accent-color);
+    background-color: rgba(0, 123, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-left: 8px;
+}
+/* ▲▲▲ 新增CSS结束 ▲▲▲ */
 
 /* ▲▲▲ 样式添加结束 ▲▲▲ */
 
@@ -6731,13 +6772,16 @@ input:checked + .slider:before {
     
     <div id="music-playlist-panel">
         <div class="playlist-header">
-            <span class="panel-btn" id="close-playlist-btn">返回</span>
-            <span>播放列表</span>
-            <div>
-                <span class="panel-btn" id="add-song-local-btn">本地</span>
-                <span class="panel-btn" id="add-song-url-btn">URL</span>
-            </div>
-        </div>
+    <span class="panel-btn" id="close-playlist-btn">返回</span>
+    <span>播放列表</span>
+    <div>
+        <span class="panel-btn" id="add-song-local-btn">本地</span>
+        <span class="panel-btn" id="add-song-url-btn">URL</span>
+        <!-- ▼▼▼ 在这里粘贴下面这行新代码 ▼▼▼ -->
+        <span class="panel-btn" id="add-song-search-btn">搜索</span>
+        <!-- ▲▲▲ 添加结束 ▲▲▲ -->
+    </div>
+</div>
         <div class="playlist-body" id="playlist-body"></div>
     </div>
     <input type="file" id="local-song-upload-input" accept="audio/*" multiple style="display: none;">
@@ -7122,6 +7166,21 @@ input:checked + .slider:before {
     </div>
 </div>
 <!-- ▲▲▲ 新增结束 ▲▲▲ -->
+<!-- ▼▼▼ 【全新】这是BGM搜索结果的弹窗，请粘贴到body末尾 ▼▼▼ -->
+<div id="music-search-results-modal" class="modal">
+    <div class="modal-content" style="height: 70%;">
+        <div class="modal-header">
+            <span>搜索结果</span>
+        </div>
+        <div class="modal-body" id="search-results-list" style="padding: 0;">
+            <!-- 搜索结果将由JS动态生成在这里 -->
+        </div>
+        <div class="modal-footer">
+            <button class="cancel" id="cancel-music-search-btn" style="width: 100%;">取消</button>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ 新增HTML结束 ▲▲▲ -->
 
 <!-- ▼▼▼ 请用这段【全新群聊兼容结构】的代码，完整替换你旧的 #video-call-screen ▼▼▼ -->
 <!-- ▼▼▼ 用下面这【一整块】全新的代码，替换掉你文件中旧的 #video-call-screen 及其所有内容 ▼▼▼ -->
@@ -8354,6 +8413,226 @@ let waimaiTimers = {}; // 用于存储外卖倒计时
 let activeMessageTimestamp = null;
 let currentReplyContext = null; // <--- 新增这行，用来存储当前正在引用的消息信息
 let activePostId = null; // <-- 新增：用于存储当前操作的动态ID
+// ▼▼▼ 【全新】BGM 搜索功能核心代码 ▼▼▼
+
+// 一个简单的网络请求函数
+if (typeof Http_Get_External === 'undefined') {
+    window.Http_Get_External = function(url) {
+        return new Promise((resolve) => {
+            fetch(url).then(res => res.json().catch(() => res.text())).then(resolve).catch(() => resolve(null));
+        });
+    }
+}
+async function Http_Get(url) { return await Http_Get_External(url); }
+
+// 检查音频链接是否真的可以播放
+function checkAudioAvailability(url) {
+    return new Promise(resolve => {
+        const tester = new Audio();
+        tester.addEventListener('loadedmetadata', () => resolve(true), { once: true });
+        tester.addEventListener('error', () => resolve(false), { once: true });
+        tester.src = url;
+    });
+}
+
+/**
+ * 从网易云搜索歌曲列表
+ */
+async function searchNeteaseMusic(name, singer) {
+    try {
+        let searchTerm = name.replace(/\s/g, "");
+        if (singer) { searchTerm += `-${singer.replace(/\s/g, "")}`; }
+        const result = await Http_Get(`https://api.vkeys.cn/v2/music/netease?word=${encodeURIComponent(searchTerm)}`);
+        if (!result?.data?.length) return [];
+        
+        return result.data.map(song => ({
+            name: song.name,
+            artist: song.ar.map(a => a.name).join(' / '),
+            id: song.id,
+            cover: song.al?.picUrl || song.picUrl || 'https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png',
+            source: 'netease' // 标记来源
+        })).slice(0, 5); // 只取前5条结果
+    } catch (e) {
+        console.error("网易云搜索API失败:", e);
+        return [];
+    }
+}
+
+/**
+ * 从QQ音乐搜索歌曲列表
+ */
+async function searchTencentMusic(name) {
+    try {
+        name = name.replace(/\s/g, "");
+        const result = await Http_Get(`https://api.vkeys.cn/v2/music/tencent?word=${encodeURIComponent(name)}`);
+        if (!result?.data?.length) return [];
+        return result.data.map(song => ({
+            name: song.song,
+            artist: song.singer,
+            id: song.id,
+            cover: song.cover || 'https://i.postimg.cc/pT2xKzPz/album-cover-placeholder.png',
+            source: 'tencent' // 标记来源
+        })).slice(0, 5); // 只取前5条结果
+    } catch (e) {
+        console.error("QQ音乐搜索API失败:", e);
+        return [];
+    }
+}
+/**
+ * 【总入口】当用户点击“搜索”按钮时触发
+ */
+async function addSongFromSearch() {
+    const searchTerm = await showCustomPrompt("搜索歌曲", "请输入 歌名 或 歌名-歌手");
+    if (!searchTerm || !searchTerm.trim()) return;
+
+    await showCustomAlert("请稍候...", "正在全网搜索歌曲资源...");
+
+    let musicName = searchTerm.trim();
+    let singerName = "";
+    if (searchTerm.includes('-') || searchTerm.includes('–')) {
+        const parts = searchTerm.split(/[-–]/);
+        musicName = parts[0].trim();
+        singerName = parts.slice(1).join(' ').trim();
+    }
+
+    const [neteaseResults, tencentResults] = await Promise.all([
+        searchNeteaseMusic(musicName, singerName),
+        searchTencentMusic(musicName)
+    ]);
+
+    const combinedResults = [...neteaseResults, ...tencentResults];
+
+    if (combinedResults.length === 0) {
+        await showCustomAlert("无结果", "抱歉，未能找到相关歌曲。");
+        return;
+    }
+
+    const modal = document.getElementById('music-search-results-modal');
+    const listEl = document.getElementById('search-results-list');
+    listEl.innerHTML = '';
+
+    combinedResults.forEach(song => {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.dataset.songJson = JSON.stringify(song);
+        item.innerHTML = `
+            <div class="title">${song.name}</div>
+            <div class="artist">${song.artist} <span class="source">${song.source === 'netease' ? '网易云' : 'QQ音乐'}</span></div>
+        `;
+        listEl.appendChild(item);
+    });
+
+    modal.classList.add('visible');
+}
+
+/**
+ * 【核心升级】处理用户点击搜索结果，增加备用音源查找和是否永久保存的逻辑
+ */
+async function handleSearchResultClick(songData) {
+    const modal = document.getElementById('music-search-results-modal');
+    modal.classList.remove('visible');
+
+    await showCustomAlert("请稍候...", `正在获取《${songData.name}》的播放链接...`);
+
+    let playableResult = null;
+    let finalSource = songData.source;
+
+    // 1. 尝试主音源
+    const primaryApiUrl = songData.source === 'netease' 
+        ? `https://api.vkeys.cn/v2/music/netease?id=${songData.id}`
+        : `https://api.vkeys.cn/v2/music/tencent?id=${songData.id}`;
+    let primaryResult = await Http_Get(primaryApiUrl);
+    if (primaryResult?.data?.url && await checkAudioAvailability(primaryResult.data.url)) {
+        playableResult = { url: primaryResult.data.url, id: songData.id, source: songData.source };
+    }
+
+    // 2. 如果主音源失败，尝试备用音源
+    if (!playableResult) {
+        await showCustomAlert("请稍候...", "主音源获取失败，正在尝试备用音源...");
+        const fallbackSource = songData.source === 'netease' ? 'tencent' : 'netease';
+        const fallbackResults = fallbackSource === 'tencent' 
+            ? await searchTencentMusic(songData.name)
+            : await searchNeteaseMusic(songData.name, songData.artist);
+
+        if (fallbackResults.length > 0) {
+            const fallbackApiUrl = fallbackSource === 'netease'
+                ? `https://api.vkeys.cn/v2/music/netease?id=${fallbackResults[0].id}`
+                : `https://api.vkeys.cn/v2/music/tencent?id=${fallbackResults[0].id}`;
+            const fallbackResult = await Http_Get(fallbackApiUrl);
+            if (fallbackResult?.data?.url && await checkAudioAvailability(fallbackResult.data.url)) {
+                playableResult = { url: fallbackResult.data.url, id: fallbackResults[0].id, source: fallbackSource };
+                finalSource = fallbackSource;
+            }
+        }
+    }
+
+    if (!playableResult) {
+        await showCustomAlert("获取失败", "无法获取该歌曲的有效播放链接，主音源和备用音源均已尝试。");
+        return;
+    }
+    
+    // =================================================================
+    // ▼▼▼【【【这就是你要求的“永久保存”选择功能！】】】▼▼▼
+    // =================================================================
+    const shouldSavePermanently = await showCustomConfirm(
+        '添加到播放列表',
+        `是否将《${songData.name}》永久保存在播放列表中？\n\n选择“取消”则只在本次会话中播放。`,
+        { confirmText: '永久保存' } // 自定义按钮文字
+    );
+    // =================================================================
+    // ▲▲▲【【【功能实现结束】】】▲▲▲
+    // =================================================================
+    
+    // 获取歌词
+    const lrcContent = await getLyricsForSong(playableResult.id, finalSource) || "";
+
+    // 构造最终的歌曲对象
+    const newSong = {
+        name: songData.name,
+        artist: songData.artist,
+        src: playableResult.url,
+        cover: songData.cover,
+        isLocal: false,
+        lrcContent: lrcContent,
+        // 【核心】根据用户的选择，设置 isTemporary 标志
+        isTemporary: !shouldSavePermanently 
+    };
+
+    musicState.playlist.push(newSong);
+
+    // 【重要】只有在用户选择永久保存时，才调用 saveGlobalPlaylist()
+    if (shouldSavePermanently) {
+        await saveGlobalPlaylist();
+    }
+    
+    updatePlaylistUI();
+
+    if (musicState.currentIndex === -1) {
+        musicState.currentIndex = musicState.playlist.length - 1;
+        updatePlayerUI();
+    }
+
+    await showCustomAlert("添加成功", `《${songData.name}》已成功添加到播放列表！`);
+}
+
+/**
+ * 【辅助】获取网络歌曲的歌词
+ */
+async function getLyricsForSong(songId, source) {
+    const url = source === 'netease'
+        ? `https://api.vkeys.cn/v2/music/netease/lyric?id=${songId}`
+        : `https://api.vkeys.cn/v2/music/tencent/lyric?id=${songId}`;
+    
+    const response = await Http_Get(url);
+    if (response?.data) {
+        const lrc = response.data.lrc || response.data.lyric || "";
+        const tlyric = response.data.trans || response.data.tlyric || "";
+        return lrc + "\\n" + tlyric;
+    }
+    return "";
+}
+
+// ▲▲▲ 新增函数粘贴结束 ▲▲▲
 
         let photoViewerState = {
             isOpen: false,
@@ -10283,7 +10562,16 @@ state.bubbleStylePresets = bubbleStylePresets || [];
     // ▲▲▲ 【修改结束】 ▲▲▲
 }
 
-        async function saveGlobalPlaylist() { await db.musicLibrary.put({ id: 'main', playlist: musicState.playlist }); }
+        // ▼▼▼ 【全新 | 支持临时歌曲】请用这个新版本替换旧的 saveGlobalPlaylist 函数 ▼▼▼
+async function saveGlobalPlaylist() {
+    // 1. 在保存前，先从当前播放列表中过滤掉所有被标记为 isTemporary 的歌曲
+    const permanentPlaylist = musicState.playlist.filter(track => !track.isTemporary);
+    
+    // 2. 只将这个“永久播放列表”保存到数据库中
+    await db.musicLibrary.put({ id: 'main', playlist: permanentPlaylist });
+    console.log("已将永久播放列表保存到数据库。");
+}
+// ▲▲▲ 替换结束 ▲▲▲
 
         function formatTimestamp(timestamp) { if (!timestamp) return ''; const date = new Date(timestamp); const hours = String(date.getHours()).padStart(2, '0'); const minutes = String(date.getMinutes()).padStart(2, '0'); return `${hours}:${minutes}`; }
 
@@ -20155,6 +20443,22 @@ document.getElementById('add-group-chat-btn').addEventListener('click', openCont
             document.getElementById('add-song-url-btn').addEventListener('click', addSongFromURL);
             document.getElementById('add-song-local-btn').addEventListener('click', () => document.getElementById('local-song-upload-input').click());
             document.getElementById('local-song-upload-input').addEventListener('change', addSongFromLocal);
+            // ▼▼▼ 【全新】BGM搜索功能事件绑定 ▼▼▼
+document.getElementById('add-song-search-btn').addEventListener('click', addSongFromSearch);
+
+document.getElementById('cancel-music-search-btn').addEventListener('click', () => {
+    document.getElementById('music-search-results-modal').classList.remove('visible');
+});
+
+document.getElementById('search-results-list').addEventListener('click', (e) => {
+    const item = e.target.closest('.search-result-item');
+    if (item && item.dataset.songJson) {
+        const songData = JSON.parse(item.dataset.songJson);
+        handleSearchResultClick(songData);
+    }
+});
+// ▲▲▲ 新增事件绑定结束 ▲▲▲
+
             audioPlayer.addEventListener('ended', playNext);
             audioPlayer.addEventListener('pause', () => { if(musicState.isActive) { musicState.isPlaying = false; updatePlayerUI(); } });
             audioPlayer.addEventListener('play', () => { if(musicState.isActive) { musicState.isPlaying = true; updatePlayerUI(); } });
