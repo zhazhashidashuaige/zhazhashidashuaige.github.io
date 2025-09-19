@@ -108,7 +108,7 @@ body {
         .form-button { width: 100%; padding: 15px; background-color: var(--accent-color); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         .form-button-secondary { background-color: #f0f0f0; color: var(--text-primary); border: 1px solid var(--border-color); }
         #wallpaper-screen .form-container { align-items: center; }
-        #wallpaper-preview { width: 180px; height: 320px; border: 2px dashed var(--border-color); background-color: #f0f2f5; margin-bottom: 20px; background-size: cover; background-position: center; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-secondary); }
+        #wallpaper-preview { width: 180px; height: 320px; border: 2px dashed var(--border-color); background-color: var(--secondary-bg); margin-bottom: 20px; background-size: cover; background-position: center; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-secondary); }
         #wallpaper-upload-input { display: none; }
 /* 修改后的 #world-book-list 样式 */
 #world-book-list {
@@ -1674,8 +1674,9 @@ body {
     align-items: center;
     padding: 12px 15px;
     cursor: pointer;
-    background-color: #f7f7f7;
+    background-color: var(--secondary-bg); /* <-- 修改这里，使用变量 */
 }
+
 
 .chat-group-header .arrow {
     font-size: 14px;
@@ -2170,26 +2171,19 @@ body {
 }
 /* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
 
-/* === 【新增】统一设置页面的背景色 (已修正) === */
-#api-settings-screen,
-#font-settings-screen,
-#wallpaper-screen,
-#memories-view,
-#contact-picker-screen,
-#member-management-screen,
-#world-book-editor-screen {  
-    background-color: var(--secondary-bg);
-}
-
-/* 确保这些页面的内容区能正确滚动 */
+/* 确保这些页面的内容区能正确滚动，同时背景透明以显示父级颜色 */
 #api-settings-screen .form-container,
 #font-settings-screen .form-container,
 #wallpaper-screen .form-container {
     padding-top: 100px;
     margin-top: -80px;
+    /* 不再需要背景色，让父元素决定 */
+}
+#font-settings-screen,
+#wallpaper-screen {
+    /* 将背景色设置为变量，这样夜间模式才能覆盖它 */
     background-color: var(--secondary-bg);
 }
-
 /* 壁纸设置页面的预览区比较特殊，需要额外调整 */
 #wallpaper-screen .form-container {
     align-items: center; /* 保持内容居中 */
@@ -3207,273 +3201,13 @@ body {
 }
 /* ▲▲▲ 新样式粘贴结束 ▲▲▲ */
 
-/* ▼▼▼ 把这一整块全新的CSS，粘贴到 <style> 的末尾 ▼▼▼ */
-
-/* === 【全新】夜间模式样式 === */
-
-/* 核心：当 #phone-screen 拥有 .dark-mode 类时，激活以下所有样式 */
-
-/* 1. 全局背景和文本颜色 */
-#phone-screen.dark-mode {
-  --status-bar-text-color: #ffffff;
-    --secondary-bg: #1c1c1e; /* 主要卡片背景色 */
-    --border-color: #38383a;  /* 边框颜色 */
-    --text-primary: #ffffff;   /* 主要文字颜色 */
-    --text-secondary: #8d8d92; /* 次要文字/图标颜色 */
-
-}
-
-/* 2. 各个页面的主背景色 */
-#phone-screen.dark-mode #chat-list-screen,
-#phone-screen.dark-mode #qzone-screen .qzone-content,
-#phone-screen.dark-mode #memories-view {
-    background-color: #000000;
-}
-
-/* 3. 聊天列表 */
-#phone-screen.dark-mode #chat-list {
-    background-color: #000000;
-}
-#phone-screen.dark-mode .chat-list-item {
-    border-bottom-color: rgba(255, 255, 255, 0.15);
-}
-#phone-screen.dark-mode .chat-group-header {
-    background-color: #1c1c1e; /* 从白色改为深灰色 */
-    border-bottom: 1px solid #38383a; /* 给它一个细微的下边框 */
-}
-#phone-screen.dark-mode .chat-list-item .name,
-#phone-screen.dark-mode .chat-group-header .group-name {
-    color: #ffffff;
-}
-#phone-screen.dark-mode .chat-list-item:hover {
-    background-color: #1c1c1e;
-}
-
-/* 4. 顶部/底部导航栏 */
-#phone-screen.dark-mode .header,
-#phone-screen.dark-mode .qzone-header {
-    background-color: rgba(25, 25, 25, 0.9);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-bottom-color: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-}
-#phone-screen.dark-mode .header .back-btn,
-#phone-screen.dark-mode .header .action-btn,
-#phone-screen.dark-mode .header .save-btn {
-    color: #ffffff;
-}
-#phone-screen.dark-mode #chat-list-bottom-nav {
-    background-color: rgba(25, 25, 25, 0.9);
-    border-top-color: rgba(255, 255, 255, 0.15);
-}
-#phone-screen.dark-mode .nav-item.active {
-    color: #ffffff;
-}
-
-/* 5. 聊天界面 */
-#phone-screen.dark-mode #chat-input-area {
-    background-color: rgba(5, 5, 5, 0.8);
-    border-top: none;
-}
-#phone-screen.dark-mode #chat-input {
-    background-color: #3e3e42;
-    color: #ffffff;
-}
-#phone-screen.dark-mode #chat-input::placeholder {
-    color: #8d8d92;
-}
-#phone-screen.dark-mode .chat-action-icon-btn {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: none;
-}
-#phone-screen.dark-mode #send-btn {
+/* ▼▼▼ 【请求7】主屏幕预设保存按钮主题色适配 (请将这块代码也粘贴到 <style> 的末尾) ▼▼▼ */
+#save-home-preset-btn {
     background-color: var(--accent-color);
+    color: white;
 }
-
-/* 6. 动态 (QZone) 界面 */
-#phone-screen.dark-mode .qzone-actions-bar,
-#phone-screen.dark-mode .qzone-post-item {
-    background-color: #1c1c1e;
-    border: 1px solid #333;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
-}
-#phone-screen.dark-mode .action-item:not(:last-child)::after {
-    background-color: #333;
-}
-#phone-screen.dark-mode .post-footer,
-#phone-screen.dark-mode .post-likes-section {
-    border-top-color: #333;
-}
-#phone-screen.dark-mode .post-likes-section {
-    background-color: rgba(0, 123, 255, 0.1);
-}
-#phone-screen.dark-mode .comment-input {
-    background-color: #333;
-    color: #ffffff;
-}
-#phone-screen.dark-mode .comment-input::placeholder {
-    color: #8d8d92;
-}
-#phone-screen.dark-mode .post-actions-btn:hover {
-    background-color: #333;
-}
-#phone-screen.dark-mode .at-mention-popup {
-    background-color: #1c1c1e;
-    border-color: #333;
-}
-#phone-screen.dark-mode .at-mention-item {
-    border-bottom-color: #333;
-}
-#phone-screen.dark-mode .at-mention-item:hover {
-    background-color: #333;
-}
-
-/* 7. 回忆录界面 */
-#phone-screen.dark-mode .memory-card {
-    background-color: #1c1c1e;
-    border-left-color: #e6a753;
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.08);
-}
-#phone-screen.dark-mode .memory-card .header {
-    background-color: #2c2c2e;
-    border-bottom-color: #38383a;
-    margin: -15px -15px 8px -15px;
-    padding: 12px 15px;
-    border-radius: 12px 12px 0 0;
-}
-#phone-screen.dark-mode .memory-card .header .date,
-#phone-screen.dark-mode .memory-card .header .author,
-#phone-screen.dark-mode .memory-card .content {
-    color: #e0e0e0;
-}
-
-/* 8. 其他设置和列表页 */
-#phone-screen.dark-mode #api-settings-screen,
-#phone-screen.dark-mode #font-settings-screen,
-#phone-screen.dark-mode #wallpaper-screen,
-#phone-screen.dark-mode #contact-picker-screen,
-#phone-screen.dark-mode #member-management-screen,
-#phone-screen.dark-mode #world-book-editor-screen,
-#phone-screen.dark-mode #world-book-list,
-#phone-screen.dark-mode .list-item:hover,
-#phone-screen.dark-mode .list-container,
-#phone-screen.dark-mode .form-container {
-    background-color: #000000;
-}
-#phone-screen.dark-mode .form-group input, 
-#phone-screen.dark-mode .form-group select, 
-#phone-screen.dark-mode .form-group textarea {
-    background-color: #1c1c1e;
-    color: #ffffff;
-    border-color: #38383a;
-}
-#phone-screen.dark-mode .form-button-secondary {
-    background-color: #333;
-    border-color: #555;
-    color: #fff;
-}
-#phone-screen.dark-mode #font-preview {
-    background-color: #1c1c1e;
-    border-color: #38383a;
-}
-#phone-screen.dark-mode #font-preview p {
-    color: #ffffff;
-}
-
 /* ▲▲▲ 粘贴结束 ▲▲▲ */
 
-/* ▼▼▼ 把这一整块【全新的修正CSS】，粘贴到 <style> 的末尾 ▼▼▼ */
-
-/* === 【全新】夜间模式视觉修正 === */
-
-/* 1. 修正动态卡片内的文字颜色 */
-#phone-screen.dark-mode .qzone-post-item .post-nickname,
-#phone-screen.dark-mode .qzone-post-item .post-content {
-    color: #f0f0f0; /* 从深灰色改为明亮的浅灰色 */
-}
-
-/* 2. 修正收藏卡片内的文字颜色 */
-#phone-screen.dark-mode .favorite-item-card .fav-card-header .name,
-#phone-screen.dark-mode .favorite-item-card .fav-card-content {
-    color: #f0f0f0; /* 同样改为浅灰色 */
-}
-#phone-screen.dark-mode .favorite-item-card .fav-card-header .source {
-    color: #8d8d92; /* 来源文字用次要灰色 */
-}
-
-/* 3. 修正收藏页的搜索栏背景和输入框样式 */
-#phone-screen.dark-mode .search-bar-container {
-    background-color: #000000; /* 容器背景变为纯黑 */
-}
-#phone-screen.dark-mode #favorites-search-input {
-    background-color: #1c1c1e; /* 输入框背景变为深灰 */
-    border-color: #38383a;     /* 边框颜色变暗 */
-    color: #ffffff;            /* 输入文字变为白色 */
-}
-#phone-screen.dark-mode #favorites-search-input::placeholder {
-    color: #8d8d92; /* 占位符文字颜色变暗 */
-}
-
-/* ▲▲▲ 修正CSS粘贴结束 ▲▲▲ */
-
-/* ▼▼▼ 把这一整块全新的CSS，粘贴到 <style> 的末尾 ▼▼▼ */
-
-/* === 【全新】iOS风格的Toggle Switch开关样式 === */
-
-/* 1. 开关的容器 */
-.toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 51px;
-    height: 31px;
-}
-
-/* 2. 隐藏掉原始的 checkbox 输入框 */
-.toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* 3. 开关的背景（那个椭圆） */
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #e9e9eb; /* 关闭时的背景色 */
-    transition: .4s;
-    border-radius: 34px;
-}
-
-/* 4. 开关上的圆点 */
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 27px;
-    width: 27px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-/* 5. 【核心】当 checkbox 被选中时（即开启状态） */
-input:checked + .slider {
-    background-color: #34c759; /* 开启时的背景色（iOS绿色）*/
-}
-
-input:checked + .slider:before {
-    transform: translateX(20px); /* 让圆点滑动到右边 */
-}
-
-/* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
 
 /* ▼▼▼ 【全新】引用回复功能样式 ▼▼▼ */
 
@@ -3557,12 +3291,12 @@ input:checked + .slider:before {
 
 /* === 字体预览框样式 (修正后) === */
 
-/* 默认（日间模式）的样式 */
+/* 将它修改为 ▼▼▼ */
 #font-preview {
     padding: 20px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background-color: #f9f9f9; /* 日间模式的浅灰色背景 */
+    background-color: #f0f2f5; /* 统一为更浅的灰色，然后让夜间模式CSS去覆盖 */
     transition: background-color 0.3s, border-color 0.3s;
 }
 
@@ -5038,77 +4772,6 @@ input:checked + .slider:before {
 }
 /* ▲▲▲ 新CSS粘贴结束 ▲▲▲ */
 
-/* ▼▼▼ 【全新】主屏幕滑动功能样式 ▼▼▼ */
-
-/* 修正 #home-screen 的flex布局，以适应新的滑动容器 */
-#home-screen {
-    justify-content: flex-start; /* 内容从顶部开始，而不是居中 */
-    padding-bottom: 20px; /* 给小圆点留出空间 */
-}
-
-/* 滑动轨道容器 */
-.home-screen-slider {
-    display: flex;
-    height: 100%;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 每一页 */
-.home-screen-page {
-    flex: 0 0 100%; /* 每页固定100%屏宽 */
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 20px 0;
-    box-sizing: border-box;
-}
-
-/* 分页小圆点的容器 */
-.pagination-dots {
-    position: absolute;
-    bottom: 25px; /* 定位在屏幕底部 */
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-}
-
-/* 单个小圆点的样式 */
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.4);
-    transition: background-color 0.3s;
-}
-
-/* 当前激活页面的小圆点样式 */
-.dot.active {
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-/* ▲▲▲ 新样式结束 ▲▲▲ */
-
-/* ▼▼▼ 【全新】第二页主屏幕图标网格样式 ▼▼▼ */
-.app-grid-standard {
-    display: grid; /* 使用现代的网格布局，而不是flex */
-    grid-template-columns: repeat(4, 1fr); /* 创建一个4列的网格，每列宽度平分 */
-    gap: 20px; /* 图标之间的上下左右间距 */
-    padding: 20px 20px; /* 在网格的上下和左右各留出一点边距 */
-    margin-top: 0; /* 覆盖掉原有的 margin-top: auto，让图标从顶部开始排列 */
-    width: 75%;
-    box-sizing: border-box; /* 确保 padding 不会撑破容器 */
-}
-
-/* 覆盖掉 .app-grid 中可能影响布局的旧样式 */
-.app-grid-standard {
-    align-items: flex-start; /* 从顶部对齐 */
-    justify-content: flex-start; /* 从左侧对齐 */
-}
-/* ▲▲▲ 新样式粘贴结束 ▲▲▲ */
-
 /* ▼▼▼ 【全新】“查角色手机”功能相关样式 ▼▼▼ */
 
 /* 角色选择列表项 */
@@ -5153,11 +4816,11 @@ input:checked + .slider:before {
 .character-data-item {
     padding: 12px 15px;
     border-bottom: 1px solid #f0f0f0; /* 边框颜色变浅 */
-    background-color: #ffffff; /* 增加白色背景 */
     margin: 8px 10px; /* 增加外边距，形成卡片感 */
     border-radius: 8px; /* 增加圆角 */
     box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 增加非常淡的阴影 */
     transition: transform 0.2s, box-shadow 0.2s; /* 增加悬浮动画 */
+    background-color: var(--secondary-bg);
 }
 
 .character-data-item:hover {
@@ -5194,16 +4857,17 @@ input:checked + .slider:before {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f0f2f5;
-    padding-top: 50px; /* ★★★ 在顶部留出50px空间，把手机框推到主顶栏下方 ★★★ */
+    /* background-color 已被删除 */
+    padding-top: 50px; 
     box-sizing: border-box; /* 确保内边距计算正确 */
 }
+
 
 /* 2. 手机边框样式 (保持不变) */
 .character-phone-frame {
     width: 95%;
     height: 98%;
-    background-color: #1a1a1a;
+    background-color: #111;
     border-radius: 30px;
     padding: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -5212,12 +4876,14 @@ input:checked + .slider:before {
     display: flex;
 }
 
-/* 3. 【核心修改1】缩小App图标的背景方格 */
+/* ▼▼▼ 用下面这块【已修复】的代码替换旧的 #character-app-grid .app-icon .icon-bg 规则 ▼▼▼ */
 #character-app-grid .app-icon .icon-bg {
-    width: 55px;  /* ★★★ 从 65px 显著缩小到 50px ★★★ */
-    height: 55px; /* ★★★ 高度同步缩小 ★★★ */
-    border-radius: 12px; /* 圆角也可以稍微小一点 */
+    width: 65px;  /* 恢复原来的尺寸 */
+    height: 65px; /* 恢复原来的尺寸 */
+    border-radius: 18px; /* 恢复原来的圆角 */
+    background-color: #fff5f7; /* 设置为你想要的淡粉色背景 */
 }
+/* ▲▲▲ 替换结束 ▲▲▲ */
 
 /* 3. 【核心修正2】缩小APP图标内的SVG */
 #character-app-grid .app-icon .icon-bg svg {
@@ -5228,10 +4894,10 @@ input:checked + .slider:before {
 /* 4. 其余样式保持不变 */
 .character-phone-inner-screen {
     flex-grow: 1;
-    background-color: #fff;
     border-radius: 20px;
     overflow: hidden;
     position: relative;
+    background-color: var(--secondary-bg) !important; /* 使用变量 */
 }
 .character-phone-notch {
     position: absolute;
@@ -5240,7 +4906,6 @@ input:checked + .slider:before {
     transform: translateX(-50%);
     width: 100px;
     height: 20px;
-    background-color: #1a1a1a;
     border-radius: 0 0 10px 10px;
     z-index: 10;
 }
@@ -5265,7 +4930,6 @@ input:checked + .slider:before {
     flex-shrink: 0;
     padding: 8px 12px;
     padding-top: 35px;
-    background-color: rgba(247, 247, 247, 0.7);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     font-size: 16px;
@@ -5275,25 +4939,31 @@ input:checked + .slider:before {
     color: var(--accent-color);
 }
 #character-chat-history-messages {
-    background-image: none !important;      /* ★★★ 移除背景图片 ★★★ */
-    background-color: #F5F5F5
- !important; /* ★★★ 设置为白色背景 ★★★ */
+     background-color: var(--secondary-bg) !important; /* 使用变量 */      /* ★★★ 移除背景图片 ★★★ */
 }
 /* ▲▲▲ 样式修正结束 ▲▲▲ */
 
-/* ▼▼▼ 【V5修正版】角色手机APP图标布局修正 ▼▼▼ */
+/* ▼▼▼ 【V5最终修复版】角色手机APP图标布局修正 ▼▼▼ */
 #character-app-grid.app-grid-standard {
-    grid-template-columns: repeat(3, 1fr); /* 核心：从4列改为3列 */
-    width: 100%; /* 稍微加宽一点，让3个图标的间距更和谐 */
-    padding-top: 70px; /* 稍微增加顶部距离，避免和刘海太近 */
+    display: grid; /* ★★★ 核心修复：告诉浏览器这是一个网格布局！ ★★★ */
+    grid-template-columns: repeat(3, 1fr); /* 保持三列的设置 */
+    gap: 20px 15px;  /* ★★★ 新增：为图标之间添加合适的 垂直 和 水平 间距 ★★★ */
+    padding: 20px; /* ★★★ 修改：统一设置内边距，让布局更规整 ★★★ */
+    padding-top: 50px; /* 覆盖一下顶部内边距，离刘海远一点 */
+    box-sizing: border-box; /* 确保内边距不会撑破容器 */
+    width: 100%;
+    
+    /* 覆盖掉旧flex布局的影响 */
+    flex-direction: initial; 
+    align-items: initial;
 }
 /* ▲▲▲ 样式修正结束 ▲▲▲ */
+
 
 /* ▼▼▼ 【全新】角色手机微信风格聊天气泡样式 ▼▼▼ */
 
 /* 1. 聊天记录界面的背景色 */
 #character-chat-history-messages {
-    background-color: #ededed; /* 微信经典的灰色背景 */
     /* 移除之前版本可能存在的背景图片 */
     background-image: none;
 }
@@ -5351,10 +5021,6 @@ input:checked + .slider:before {
 .character-chat-bubble-container.received {
     align-self: flex-start; /* 整体靠左 */
 }
-.character-chat-bubble-container.received .character-chat-bubble {
-    background-color: #ffffff; /* 白色 */
-    color: #000;
-}
 /* 对方气泡的小尾巴 */
 .character-chat-bubble-container.received .character-chat-bubble::before {
     content: "";
@@ -5379,7 +5045,6 @@ input:checked + .slider:before {
     content: none !important;
 }
 /* ▲▲▲ 样式添加结束 ▲▲▲ */
-
 /* ▼▼▼ 【全新】角色手机新增APP页面样式 ▼▼▼ */
 
 /* 1. 相册页面的网格布局 */
@@ -6037,7 +5702,6 @@ input:checked + .slider:before {
 }
 
 .font-preset-slot {
-    background-color: #f9f9f9;
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 15px;
@@ -6047,7 +5711,6 @@ input:checked + .slider:before {
 }
 
 #phone-screen.dark-mode .font-preset-slot {
-    background-color: #1c1c1e;
     border-color: #38383a;
 }
 
@@ -6061,7 +5724,6 @@ input:checked + .slider:before {
 .font-preview-text {
     font-size: 22px;
     padding: 10px;
-    background-color: #fff;
     border-radius: 8px;
     text-align: center;
     min-height: 30px;
@@ -6325,6 +5987,520 @@ input:checked + .slider:before {
     z-index: 250 !important; /* 这个值必须高于播放列表(210)，!important确保它拥有最高优先级 */
 }
 /* ▲▲▲ 粘贴结束 ▲▲▲ */
+/* ▼▼▼ 步骤 1：把这一整块全新的CSS，粘贴到 <style> 的末尾 ▼▼▼ */
+
+/* --- 1. 隐藏旧的主屏幕元素 --- */
+/* 我们不再需要旧的锁屏时钟和图标网格了，新的布局会完全取代它们 */
+#home-screen #clock-container,
+#home-screen .app-grid {
+    display: none !important;
+}
+
+/* --- 2. 【核心】重新定义主屏幕布局 --- */
+/* 
+   这将把你的主屏幕从一个简单的垂直列表，变成一个撑满全屏、
+   使用Flexbox布局的强大容器，为新的“桌面式”布局打下基础。
+*/
+#home-screen {
+    /* 使用一个漂亮的线性渐变作为默认背景，当然你可以在“外观设置”里随时换掉它 */
+    background: linear-gradient(135deg, #6DD5FA, #2980B9);
+    background-size: cover;
+    background-position: center;
+    
+    /* 适配iPhone刘海和底部安全区 */
+    padding-top: calc(20px + env(safe-area-inset-top));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    
+    /* 使用Flexbox让内容区和Dock栏上下分离 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    align-items: center;
+    height: 100%; /* 确保它撑满屏幕 */
+}
+
+/* --- 3. 中间主要内容区 (个人资料卡 + 小组件 + App图标) --- */
+#main-content-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* 卡片和下方图标的间距 */
+    align-items: center;
+    margin-top: 20px; /* 距离屏幕顶部一点距离 */
+}
+
+/* --- 4. 个人资料卡片 (这是视觉核心) --- */
+
+/* 4a. 卡片外层容器：这是所有内部元素定位的“锚点” */
+#profile-widget {
+    position: relative; /* 关键：让内部的头像和伪元素可以相对于它进行绝对定位 */
+    width: 100%;
+    max-width: 380px;
+    flex-shrink: 0;
+}
+
+/* 4b. 背景头图：只给顶部设置圆角 */
+#profile-banner-img {
+    display: block; 
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 24px 24px 0 0; /* 只给顶部设置圆角 */
+    position: relative;
+    z-index: 1; /* 层级1：在最下方 */
+}
+
+/* 4c. 头像容器：精确定位，使其中心线与头图底部对齐 */
+#profile-widget .profile-avatar-container {
+    position: absolute;
+    top: 80px; /* 从顶部向下偏移，让它一半在头图上，一半在下面 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: white; /* 白色背景板，让头像更突出 */
+    padding: 4px; /* 白色边框的效果 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 3; /* 层级3：最高层，压住一切 */
+}
+
+#profile-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 4d. 白色信息卡片：使用负外边距实现无缝拼接 */
+#profile-widget .profile-info {
+  /* 【修改后】白色到透明的渐变背景，并加上一层柔和的阴影 */
+background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85) 20%, rgba(255, 255, 255, 0));
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 24px;
+    
+    /* 核心魔法：使用负外边距，将卡片向上移动，与头图和头像重叠 */
+    margin-top: -24px; 
+    
+    /* 同时，为上移的头像留出精确的空间，避免文字压住头像 */
+    padding-top: 54px; /* 头像半径(40px) + 额外间距(14px) */
+    
+    min-height: 120px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+    text-align: center;
+    color: #1c1c1e;
+    position: relative;
+    z-index: 2; /* 层级2：在头图之上，但在头像之下 */
+}
+
+/* 4e. 个人资料内部的文字样式 */
+#profile-username { font-size: 18px; font-weight: 600; margin: 0 0 2px 0; }
+#profile-sub-username { font-size: 13px; color: #8a8a8a; margin: 0 0 10px 0; }
+#profile-bio { font-size: 14px; margin: 0 0 12px 0; color: #333; }
+#profile-location {
+    font-size: 12px; color: #8a8a8a; margin: 0 auto; display: inline-flex;
+    align-items: center; gap: 4px; background-color: rgba(0,0,0,0.05);
+    padding: 3px 9px; border-radius: 10px;
+}
+
+/* --- 5. 桌面式布局 (小组件 + App图标) --- */
+#desktop-layout {
+    display: grid; /* 使用Grid布局，轻松实现两列 */
+    grid-template-columns: 1fr 1.1fr; /* 左窄右宽的两列 */
+    gap: 20px;
+    width: 100%;
+    align-items: start;
+}
+#desktop-widget-column {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* 【核心修改】将 space-around 改为 space-between */
+    align-items: start;
+    width: 100%;
+}
+
+/* 右侧App图标容器 */
+#desktop-app-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 两列图标 */
+    gap: 25px;
+    align-content: start;
+}
+.desktop-app-icon {
+    display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; text-align: center;
+}
+.icon-bg-desktop {
+    width: 55px; height: 55px; border-radius: 14px; background-color: #f0f2f5; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s ease; overflow: hidden;
+}
+.icon-bg-desktop img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+.desktop-app-icon .label { color: #333; font-size: 13px; font-weight: 500; }
+.desktop-app-icon:active .icon-bg-desktop { transform: scale(0.9); }
+
+
+/* --- 6. 底部 Dock 栏 --- */
+#desktop-dock {
+    background-color: rgba(255, 255, 255, 0.15); /* 玻璃拟态背景 */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    width: fit-content; /* 宽度自适应内容 */
+    flex-shrink: 0;
+}
+
+/* --- 7. 【核心功能】为可编辑元素添加视觉反馈 --- */
+.editable-text, .editable-image {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* 鼠标悬停时，显示一个半透明的虚线外框，并轻微变暗，提示用户这里可以点 */
+.editable-text:hover, .editable-image:hover {
+    outline: 2px dashed rgba(0, 0, 0, 0.4);
+    opacity: 0.85;
+    border-radius: 4px; /* 让外框也有一点圆角 */
+}
+
+/* --- 8. 【锁屏兼容】让锁屏和主屏幕可以堆叠 --- */
+#lock-screen, #home-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+#lock-screen {
+    z-index: 999; /* 确保锁屏在最上层 */
+}
+/* ▼▼▼ 这是新增的桌面小组件样式 ▼▼▼ */
+
+/* 单个小组件的总容器 */
+.custom-widget-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* 各个元素之间的垂直间距 */
+}
+
+.widget-bubble {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 20px; /* 【核心修改】增加圆角，实现胶囊感 */
+    font-size: 13px;
+    font-weight: 500;
+    /* 【核心修改】移除 min-width，让宽度自适应内容 */
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+
+/* 用伪元素给气泡加一个小尾巴，指向下面的圆形图片 */
+.widget-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; /* 尾巴在气泡下方 */
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.9) transparent transparent transparent;
+}
+
+.widget-circle-uploader {
+    width: 65px; /* 从 80px 缩小 */
+    height: 65px; /* 从 80px 缩小 */
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    padding: 3px;
+    background-color: transparent; /* 【核心修改】将背景色改为透明 */ 
+    box-sizing: border-box;
+}
+
+
+/* 这是替换后的第二块 */
+.widget-circle-uploader img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* 【核心】让图片也变成圆形，完美适应内边距 */
+}
+
+
+/* 下方的透明文字区域 */
+.widget-subtext {
+    background: transparent;
+    border: none;
+    color:  #333;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5); /* 加一点文字阴影更清晰 */
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ▲▲▲ 新增样式结束 ▲▲▲ */
+/* ▼▼▼ 【V3最终美化版】主屏幕美化预设功能样式 ▼▼▼ */
+.preset-manager-container {
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+#phone-screen.dark-mode .preset-manager-container {
+    border-top-color: #3a3a3c;
+}
+.preset-manager-container .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.preset-manager-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 【核心】2x2 网格布局 */
+    gap: 12px; /* 按钮间距 */
+    width: 100%;
+}
+.preset-btn-capsule {
+    padding: 12px 15px; /* 增加垂直内边距，让按钮更高更可爱 */
+    border: none;
+    border-radius: 25px; /* 更大的圆角，胶囊感更强 */
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08); /* 增加一点立体阴影 */
+}
+.preset-btn-capsule:active {
+    transform: scale(0.96);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.preset-btn-capsule:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    background-color: #e9ecef !important; /* 禁用时统一用灰色 */
+    color: #adb5bd !important;
+    border-color: #dee2e6 !important;
+}
+#phone-screen.dark-mode .preset-btn-capsule:disabled {
+    background-color: #3a3a3c !important;
+    color: #545458 !important;
+}
+.preset-btn-apply {
+    background-color: var(--accent-color); /* 应用按钮使用主题色 */
+    color: white;
+    grid-column: 1 / -1; /* 【核心】让应用按钮独占一行，更突出 */
+}
+.preset-btn-save {
+    background-color: #4cd964; /* 保存用绿色，代表创建 */
+    color: white;
+}
+.preset-btn-secondary {
+    background-color: #f8f9fa;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+#phone-screen.dark-mode .preset-btn-secondary {
+    background-color: #3a3a3c;
+    border-color: #545458;
+}
+.preset-btn-delete {
+    background-color: #ffdde5;
+    color: #ff3b30;
+}
+#phone-screen.dark-mode .preset-btn-delete {
+    background-color: #5c2b2b;
+    color: #ff8a80;
+}
+/* ▲▲▲ 样式粘贴结束 ▲▲▲ */
+
+
+
+/* ▼▼▼ 【V5智能修复版】夜间模式终极适配 (已修复所有页面适配问题) ▼▼▼ */
+
+/* 核心：当 #phone-screen 拥有 .dark-mode 类时，激活以下所有样式 */
+
+/* 1. 全局重新定义颜色变量 */
+#phone-screen.dark-mode {
+  --secondary-bg: #1c1c1e;
+  --border-color: #38383a;
+  --text-primary: #ffffff;
+  --text-secondary: #8e8e93;
+  --status-bar-text-color: #ffffff;
+}
+
+/* 2. 【基础】为所有屏幕和主要容器设置基础深色背景 */
+#phone-screen.dark-mode,
+#phone-screen.dark-mode .screen,
+#phone-screen.dark-mode #chat-list,
+#phone-screen.dark-mode #world-book-list,
+#phone-screen.dark-mode .list-container,
+#phone-screen.dark-mode .form-container,
+#phone-screen.dark-mode #font-settings-screen, /* <-- 新增这一行 */
+#phone-screen.dark-mode #wallpaper-screen,   /* <-- 新增这一行 */
+#phone-screen.dark-mode #chat-messages {
+    background-color: #000000 !important;
+}
+
+
+/* 3. 【主屏幕】专属样式 (从被删除的代码中恢复并整合) */
+#phone-screen.dark-mode #home-screen {
+    background: #111827; /* 深蓝色背景 */
+}
+#phone-screen.dark-mode #desktop-dock {
+    background-color: rgba(55, 65, 81, 0.5); /* Dock栏深灰色玻璃效果 */
+}
+#phone-screen.dark-mode .desktop-app-icon .label,
+#phone-screen.dark-mode .widget-subtext {
+    color: #e5e7eb; /* 桌面文字变为浅灰色 */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.7); /* 加强阴影 */
+}
+#phone-screen.dark-mode #profile-widget .profile-info {
+    background: linear-gradient(to bottom, rgba(28, 28, 30, 0.85) 20%, rgba(28, 28, 30, 0)); /* 信息卡片深灰色渐变 */
+    color: #f9fafb;
+}
+#phone-screen.dark-mode #profile-username,
+#phone-screen.dark-mode #profile-bio {
+    color: #f9fafb; /* 信息卡片主文字白色 */
+}
+#phone-screen.dark-mode #profile-sub-username,
+#phone-screen.dark-mode #profile-location {
+    color: #9ca3af; /* 信息卡片次要文字灰色 */
+}
+#phone-screen.dark-mode #profile-location {
+    background-color: rgba(255,255,255,0.1); /* 地点背景变亮 */
+}
+#phone-screen.dark-mode .widget-bubble {
+    background-color: rgba(55, 65, 81, 0.9); /* 小组件气泡深灰色 */
+    color: #e5e7eb; /* 小组件文字浅灰色 */
+}
+#phone-screen.dark-mode .widget-bubble::after {
+    border-top-color: rgba(55, 65, 81, 0.9); /* 小尾巴颜色同步 */
+}
+
+/* 4. 【修复】适配所有页面的头部Header */
+#phone-screen.dark-mode .header,
+#phone-screen.dark-mode .qzone-header {
+    background-color: rgba(28, 28, 30, 0.85) !important;
+    border-bottom-color: var(--border-color) !important;
+    color: var(--text-primary) !important; 
+}
+
+/* 5. 【修复】适配所有通用组件 (弹窗、输入框等) */
+#phone-screen.dark-mode #chat-input-area,
+#phone-screen.dark-mode #chat-list-bottom-nav {
+    background-color: rgba(28, 28, 30, 0.85);
+    border-top-color: var(--border-color);
+}
+#phone-screen.dark-mode #chat-input {
+    background-color: var(--secondary-bg);
+    color: var(--text-primary);
+}
+#phone-screen.dark-mode .modal-content,
+#phone-screen.dark-mode #custom-modal {
+    background-color: #2c2c2e;
+}
+#phone-screen.dark-mode .modal-header, 
+#phone-screen.dark-mode .modal-footer,
+#phone-screen.dark-mode .custom-modal-footer {
+    border-color: var(--border-color);
+}
+#phone-screen.dark-mode .form-group input,
+#phone-screen.dark-mode .form-group select,
+#phone-screen.dark-mode .form-group textarea {
+    background-color: var(--secondary-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+#phone-screen.dark-mode .list-item {
+    border-bottom-color: var(--border-color);
+}
+#phone-screen.dark-mode .list-item:hover,
+#phone-screen.dark-mode .chat-list-item:hover {
+    background-color: #2c2c2e;
+}
+
+/* 6. 【解决】字体预设 & 外观设置页面深度适配 */
+#phone-screen.dark-mode #font-preset-slot,
+#phone-screen.dark-mode #font-preview,
+#phone-screen.dark-mode #wallpaper-preview {
+    background-color: var(--secondary-bg);
+    border-color: var(--border-color);
+}
+#phone-screen.dark-mode .preset-btn.secondary {
+    background-color: #3e3e42;
+    border-color: #545458;
+}
+
+/* 7. 【解决】“查手机”功能所有内部页面深度适配 */
+#phone-screen.dark-mode #character-phone-container {
+    background-color: #000000;
+}
+#phone-screen.dark-mode .character-phone-frame {
+    background-color: #111;
+}
+#phone-screen.dark-mode .character-phone-inner-screen,
+#phone-screen.dark-mode .character-phone-page {
+    background-color: #000000;
+}
+#phone-screen.dark-mode .character-phone-header {
+    background-color: rgba(28, 28, 30, 0.85) !important;
+    border-bottom: 1px solid #38383a !important;
+}
+#phone-screen.dark-mode #character-app-grid .label {
+    color: #e5e7eb;
+}
+#phone-screen.dark-mode .character-chat-list .chat-list-item:hover {
+    background-color: #1c1c1e;
+}
+#phone-screen.dark-mode #character-chat-history-messages {
+    background-color: #0e0e0e !important;
+}
+#phone-screen.dark-mode .character-chat-bubble.received {
+    background-color: #2c2c2e;
+}
+#phone-screen.dark-mode .character-data-item,
+#phone-screen.dark-mode .character-bank-transaction,
+#phone-screen.dark-mode .character-cart-item,
+#phone-screen.dark-mode .character-browser-item {
+    background-color: #1c1c1e;
+    border-color: #38383a;
+}
+#phone-screen.dark-mode .character-data-item .title,
+#phone-screen.dark-mode .character-data-item .content,
+#phone-screen.dark-mode .cart-item-price {
+    color: var(--text-primary);
+}
+#phone-screen.dark-mode .character-bank-balance-card {
+    background: linear-gradient(135deg, #3a3a3c, #1c1c1e);
+}
+#phone-screen.dark-mode #character-diary-list .character-data-item {
+    background-color: #1a1510;
+    border-color: #4a443b;
+    border-left-color: #8c7d6b;
+}
+/* >> 您要的：查手机里char的名字改成低饱和度的颜色 << */
+#phone-screen.dark-mode #character-chat-list .name {
+    color: #80CBC4 !important; /* 这是一个柔和的青色，低饱和度且护眼 */
+}
+/* 8. 【新增】修复聊天列表分组标题的背景色 */
+#phone-screen.dark-mode .chat-group-header {
+    background-color: #1c1c1e; /* 使用和其他组件一致的深灰色 */
+}
+
+/* ▲▲▲ CSS 代码粘贴结束 ▲▲▲ */
+
     </style>
     <!-- ▼▼▼ 在这里添加下面这行 ▼▼▼ -->
     <style id="custom-theme-style"></style>
@@ -6360,85 +6536,78 @@ input:checked + .slider:before {
 <div id="lock-screen-background-blur" style="display: none;"></div>
 <!-- ▲▲▲ 粘贴结束 ▲▲▲ -->
             
-            <div id="home-screen" class="screen active">
-<!-- ▼▼▼ 【全新】滑动容器与分页结构 ▼▼▼ -->
-<div class="home-screen-slider">
-    <!-- 第一页 -->
-    <div class="home-screen-page">
-        <div id="clock-container">
-            <div id="main-time">12:00</div>
-            <div id="main-date">星期一, 1月1日</div>
-        </div>
-        <div class="app-grid">
-            <!-- 第一行：放2个图标 -->
-            <div class="app-row">
-                <div class="app-icon" onclick="showScreen('world-book-screen')">
-                    <div class="icon-bg">
-                        <img id="icon-img-world-book" src="https://i.postimg.cc/HWf1JKzn/IMG-6435.jpg" alt="世界书">
-                    </div>
-                    <span class="label">世界书</span>
-                </div>
-                <div class="app-icon" onclick="showScreen('chat-list-screen')">
-                    <div class="icon-bg">
-                        <img id="icon-img-qq" src="https://i.postimg.cc/MTC3Tkw8/IMG-6436.jpg" alt="QQ">
-                    </div>
-                    <span class="label">QQ</span>
-                </div>
-            </div>
-            <!-- 第二行：放3个图标 -->
-            <div class="app-row">
-                <div class="app-icon" onclick="showScreen('api-settings-screen')">
-                    <div class="icon-bg">
-                        <img id="icon-img-api-settings" src="https://i.postimg.cc/MK8rJ8t7/IMG-6438.jpg" alt="API设置">
-                    </div>
-                    <span class="label">API设置</span>
-                </div>
-                <div class="app-icon" onclick="showScreen('wallpaper-screen')">
-                    <div class="icon-bg">
-                        <img id="icon-img-wallpaper" src="https://i.postimg.cc/T1j03pQr/IMG-6440.jpg" alt="外观设置">
-                    </div>
-                    <span class="label">外观设置</span>
-                </div>
-                <div class="app-icon" onclick="showScreen('font-settings-screen')">
-                    <div class="icon-bg">
-                        <img id="icon-img-font" src="https://i.postimg.cc/pXxk1JXk/IMG-6442.jpg" alt="字体">
-                    </div>
-                    <span class="label">字体</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- ▼▼▼ 用下面这【一整块】全新的代码，替换掉你旧的 <div id="home-screen"...>...</div> ▼▼▼ -->
 
-<!-- ▼▼▼ 这是修改后的新结构 ▼▼▼ -->
-<div class="home-screen-page">
-    <!-- 1. 在这里添加了新类名 app-grid-standard -->
-    <!-- 2. 并且删除了里面的 app-row -->
-    <div class="app-grid app-grid-standard">
-        <div class="app-icon" data-app-id="check-phone" onclick="openCharacterSelectionScreen()">
-            <div class="icon-bg">
-                <img id="icon-img-check-phone" src="https://i.postimg.cc/RVwpwr0r/IMG-8348.jpg" alt="查手机">
+<div id="home-screen" class="screen active">
+    
+    <!-- 我们不再需要滑动容器了，直接放主要内容区 -->
+    <div id="main-content-area">
+        <div id="profile-widget">
+            <img id="profile-banner-img" src="https://i.postimg.cc/k495F4W5/profile-banner.jpg" class="editable-image">
+            <div class="profile-avatar-container">
+                <img id="profile-avatar-img" src="https://i.postimg.cc/qRqpK5kP/anime-avatar.jpg" class="editable-image">
             </div>
-            <span class="label">查手机</span>
+            <div class="profile-info">
+                <p id="profile-username" class="editable-text">你的昵称</p>
+                <p id="profile-sub-username" class="editable-text">@your_id</p>
+                <p id="profile-bio" class="editable-text">点击这里编辑你的个性签名</p>
+                <p id="profile-location" class="editable-text">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
+                    <span>点击编辑地点</span>
+                </p>
+            </div>
         </div>
-        
-        <!-- 你未来添加的新APP图标，也直接放在这里就行 -->
-        <!-- 
-        <div class="app-icon">
-            ...
+        <div id="desktop-layout">
+            <div id="desktop-widget-column">
+    <!-- ▼▼▼ 这是全新的小组件结构 ▼▼▼ -->
+    <div class="custom-widget-container">
+        <div id="widget-bubble-1" class="widget-bubble editable-text" contenteditable="true">点击编辑文字</div>
+        <div class="widget-circle-uploader">
+            <img id="widget-image-1" src="https://i.postimg.cc/qRqpK5kP/anime-avatar.jpg" class="editable-image" title="点击更换图片">
         </div>
-        -->
+        <div id="widget-subtext-1" class="widget-subtext editable-text" contenteditable="true">点击编辑文字</div>
     </div>
+    <div class="custom-widget-container">
+        <div id="widget-bubble-2" class="widget-bubble editable-text" contenteditable="true">点击编辑文字</div>
+        <div class="widget-circle-uploader">
+            <img id="widget-image-2" src="https://i.postimg.cc/k495F4W5/profile-banner.jpg" class="editable-image" title="点击更换图片">
+        </div>
+        <div id="widget-subtext-2" class="widget-subtext editable-text" contenteditable="true">点击编辑文字</div>
+    </div>
+    <!-- ▲▲▲ 替换结束 ▲▲▲ -->
+</div>
+
+            <!-- 核心修改：我们把所有4个App图标都放在这个容器里 -->
+            <div id="desktop-app-container">
+                <div class="desktop-app-icon" onclick="showScreen('chat-list-screen')"><div class="icon-bg-desktop"><img id="icon-img-qq" src="https://i.postimg.cc/MTC3Tkw8/IMG-6436.jpg" alt="QQ"></div><span class="label">QQ</span></div>
+                <div class="desktop-app-icon" onclick="showScreen('world-book-screen')"><div class="icon-bg-desktop"><img id="icon-img-world-book" src="https://i.postimg.cc/HWf1JKzn/IMG-6435.jpg" alt="世界书"></div><span class="label">世界书</span></div>
+<!-- ▼▼▼ 核心修改：移除 onclick，添加 id ▼▼▼ -->
+<div id="check-phone-btn" class="desktop-app-icon">
+    <div class="icon-bg-desktop"><img id="icon-img-check-phone" src="https://i.postimg.cc/RVwpwr0r/IMG-8348.jpg" alt="查手机"></div>
+    <span class="label">查手机</span>
 </div>
 <!-- ▲▲▲ 修改结束 ▲▲▲ -->
+                <div class="desktop-app-icon" onclick="showScreen('wallpaper-screen')">
+                    <div class="icon-bg-desktop"><img id="icon-img-wallpaper" src="https://i.postimg.cc/T1j03pQr/IMG-6440.jpg" alt="外观设置"></div>
+                    <span class="label">外观设置</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部 Dock 栏保持不变 -->
+    <div id="desktop-dock">
+        <div class="desktop-app-icon" onclick="showScreen('api-settings-screen')"><div class="icon-bg-desktop"><img id="icon-img-api-settings" src="https://i.postimg.cc/MK8rJ8t7/IMG-6438.jpg" alt="API设置"></div><span class="label">API设置</span></div>
+        <div class="desktop-app-icon" onclick="showScreen('font-settings-screen')"><div class="icon-bg-desktop"><img id="icon-img-font" src="https://i.postimg.cc/pXxk1JXk/IMG-6442.jpg" alt="字体"></div><span class="label">字体</span></div>
+    </div>
+    
+    <!-- 分页小圆点我们不再需要了，已经删掉 -->
 </div>
 
-<!-- 分页小圆点 -->
-<div class="pagination-dots">
-    <span class="dot active"></span>
-    <span class="dot"></span>
-</div>
-<!-- ▲▲▲ 新结构结束 ▲▲▲ -->
-            </div>
+<!-- ▲▲▲ HTML 替换结束 ▲▲▲ -->
+
+
+
           
 <div id="world-book-screen" class="screen">
     <div class="header">
@@ -6982,7 +7151,7 @@ input:checked + .slider:before {
         <button class="form-button" onclick="document.getElementById('wallpaper-upload-input').click();">上传壁纸</button>
         <input type="file" id="wallpaper-upload-input" accept="image/*">
 
-<!-- ▼▼▼ 将【上面整块代码】，完整替换为下面这段【全新的代码】 ▼▼▼ -->
+<!-- ▼▼▼ 将【下面整块代码】，完整替换为下面这段【全新的代码】 ▼▼▼ -->
 <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
     <label for="theme-toggle-switch" style="margin-bottom: 0;">夜间模式</label>
     <label class="toggle-switch">
@@ -6991,6 +7160,7 @@ input:checked + .slider:before {
     </label>
 </div>
 <!-- ▲▲▲ 替换结束 ▲▲▲ -->
+
 
     <!-- === ▼▼▼ 以下是新增的美化功能UI ▼▼▼ === -->
     <div style="width:100%; text-align: left; margin-bottom: 15px;">
@@ -7025,7 +7195,30 @@ input:checked + .slider:before {
         <input type="file" id="import-theme-input" accept=".json" hidden>
     </div>
     <!-- === ▲▲▲ 新增UI结束 ▲▲▲ === -->
-        
+<!-- ▼▼▼ 【V3最终美化版】主屏幕美化预设功能UI ▼▼▼ -->
+<div class="preset-manager-container">
+    <div style="width:100%; text-align: left; margin-bottom: 15px;">
+        <label style="font-weight: 500; color: var(--text-secondary);">主屏幕预设</label>
+    </div>
+    <div class="form-group">
+        <select id="home-preset-selector" class="form-group select"></select>
+        <div class="preset-manager-controls">
+            <!-- 独占一行的应用按钮 -->
+            <button id="apply-home-preset-btn" class="preset-btn-capsule preset-btn-apply" disabled>应用</button>
+            
+            <!-- 2x2 网格按钮 -->
+            <button id="save-home-preset-btn" class="preset-btn-capsule preset-btn-save">保存</button>
+            <button id="rename-home-preset-btn" class="preset-btn-capsule preset-btn-secondary" disabled>重命名</button>
+            <button id="import-home-preset-btn" class="preset-btn-capsule preset-btn-secondary">导入</button>
+            <button id="export-home-preset-btn" class="preset-btn-capsule preset-btn-secondary" disabled>导出</button>
+            <button id="delete-home-preset-btn" class="preset-btn-capsule preset-btn-delete" disabled>删除</button>
+            
+            <input type="file" id="import-home-preset-input" accept=".json" hidden>
+        </div>
+    </div>
+</div>
+<!-- ▲▲▲ UI替换结束 ▲▲▲ -->
+
         <!-- 【核心修改2】新增图标设置区域 -->
         <hr style="width: 80%; opacity: 0.3; margin: 30px 0;">
         <div style="width:100%; text-align: left; margin-bottom: 15px;">
@@ -7129,7 +7322,8 @@ input:checked + .slider:before {
                         </span>
                     </div>
                 </div>
-                <div id="character-app-grid" class="app-grid app-grid-standard" style="padding-top: 60px;"></div>
+                <!-- ▼▼▼ 核心修改：删除了 "app-grid" 这个class ▼▼▼ -->
+<div id="character-app-grid" class="app-grid-standard" style="padding-top: 60px;"></div>
             </div>
 
             <!-- 2b. 角色手机 - 聊天列表 -->
@@ -9115,8 +9309,9 @@ const THEME_CSS_TEMPLATE = `
 #call-history-screen,
 #chat-search-screen,
 #browser-screen {
-  background-color: #FAFAFA !important;
+  /* 这里不再设置背景色，让它自然继承夜间模式的颜色 */
 }
+
 
 /* === 7. 回忆卡片美化 === */
 .memory-card {
@@ -9504,7 +9699,7 @@ function showCustomPrompt(title, placeholder, initialValue = '', type = 'text', 
         // 2. 数据库结构定义
         // ===================================================================
 
-db.version(29).stores({ 
+db.version(30).stores({ 
 chats: '&id, isGroup, groupId, isPinned, characterPhoneData',
     apiConfig: '&id', 
     globalSettings: '&id, activeThemeId', 
@@ -9525,7 +9720,8 @@ chats: '&id, isGroup, groupId, isPinned, characterPhoneData',
     themes: '++id, name, css',
     apiPresets: '++id, name, proxyUrl, apiKey',
     bubbleStylePresets: '++id, name, css',
-    fontPresets: '&id, name, url' // <-- 就是在这里添加了新的一行！
+    fontPresets: '&id, name, url', // <-- 就是在这里添加了新的一行！
+    homeScreenPresets: '++id, name'
 });
 
 // ===================================================================
@@ -9533,6 +9729,62 @@ chats: '&id, isGroup, groupId, isPinned, characterPhoneData',
 // ===================================================================
 
 // ▼▼▼ 从这里开始，粘贴所有新代码 ▼▼▼
+/**
+ * 【V2智能版】应用指定的主题，并智能刷新当前打开的任何界面
+ * @param {string} theme - 'light' 或 'dark'
+ */
+function applyTheme(theme) {
+    const phoneScreen = document.getElementById('phone-screen');
+    const toggleSwitch = document.getElementById('theme-toggle-switch');
+    
+    const isDark = theme === 'dark';
+    
+    // 核心操作：为手机屏幕添加或移除 .dark-mode 类
+    phoneScreen.classList.toggle('dark-mode', isDark);
+    
+    // 同步开关的状态
+    if (toggleSwitch) {
+        toggleSwitch.checked = isDark;
+    }
+    
+    // 保存用户的选择
+    localStorage.setItem('ephone-theme', theme);
+
+    // 【核心修复！】
+    // 不再只关心聊天界面，而是找出当前究竟是哪个界面处于激活状态
+    const activeScreen = document.querySelector('.screen.active');
+    if (!activeScreen) return; // 如果找不到，就退出
+
+    // 根据当前激活的界面ID，调用它专属的刷新函数
+    switch (activeScreen.id) {
+        case 'chat-interface-screen':
+            if (state.activeChatId) {
+                renderChatInterface(state.activeChatId);
+            }
+            break;
+        case 'wallpaper-screen':
+            // 外观设置页也需要重新渲染来应用新主题
+            renderWallpaperScreen();
+            break;
+        case 'font-settings-screen':
+            // 字体预设页同样需要
+            renderFontPresets();
+            break;
+        // 如果未来还有其他页面需要适配，在这里添加 case 即可
+    }
+}
+
+
+/**
+ * 当用户点击开关时，切换当前的主题
+ */
+function toggleTheme() {
+    const toggleSwitch = document.getElementById('theme-toggle-switch');
+    // 直接根据开关的选中状态来决定新主题
+    const newTheme = toggleSwitch.checked ? 'dark' : 'light';
+    applyTheme(newTheme);
+}
+
 // ▼▼▼ 【全新】字体预设功能核心函数 ▼▼▼
 
 /**
@@ -10786,19 +11038,27 @@ if (!chat.isGroup) {
     }, {});
     state.apiConfig = apiConfig || { id: 'main', proxyUrl: '', apiKey: '', model: '' };
 
+// ▼▼▼ 步骤 3.1：在 loadAllDataFromDB 函数中，找到并【替换】这行代码 ▼▼▼
+
 state.globalSettings = globalSettings || { 
     id: 'main', 
     wallpaper: 'linear-gradient(135deg, #89f7fe, #66a6ff)', 
-    lockscreenWallpaper: 'linear-gradient(135deg, #764ba2, #667eea)', // <-- 新增：默认锁屏壁纸
-    password: '', // <-- 新增：默认无密码
+    lockscreenWallpaper: 'linear-gradient(135deg, #764ba2, #667eea)',
+    password: '',
     fontUrl: '', 
     enableBackgroundActivity: false, 
     backgroundActivityInterval: 60,
     blockCooldownHours: 1,
-    backgroundActivityConfig: {}, // <-- 【【【在这里添加这一行新代码】】】
     appIcons: { ...DEFAULT_APP_ICONS },
-    ringtoneUrl: 'https://files.catbox.moe/3w7gla.mp3' // <-- 【核心新增】在这里添加默认铃声URL
+    ringtoneUrl: 'https://files.catbox.moe/3w7gla.mp3',
+    widgetData: {} // 【核心修改】在这里新增一个空对象，用来存放你的自定义内容
 };
+// 确保即使从旧数据库加载，这个属性也存在
+if (!state.globalSettings.widgetData) {
+    state.globalSettings.widgetData = {};
+}
+// ▲▲▲ 替换结束 ▲▲▲
+
 
     // ▼▼▼ 在这里添加下面这行代码 ▼▼▼
     // 【核心新增】加载歌词栏设置，如果不存在则使用默认值
@@ -10836,10 +11096,78 @@ async function saveGlobalPlaylist() {
 
         function showNotification(chatId, messageContent) { clearTimeout(notificationTimeout); const chat = state.chats[chatId]; if (!chat) return; const bar = document.getElementById('notification-bar'); document.getElementById('notification-avatar').src = chat.settings.aiAvatar || chat.settings.groupAvatar || defaultAvatar; document.getElementById('notification-content').querySelector('.name').textContent = chat.name; document.getElementById('notification-content').querySelector('.message').textContent = messageContent; const newBar = bar.cloneNode(true); bar.parentNode.replaceChild(newBar, bar); newBar.addEventListener('click', () => { openChat(chatId); newBar.classList.remove('visible'); }); newBar.classList.add('visible'); notificationTimeout = setTimeout(() => { newBar.classList.remove('visible'); }, 4000); }
 
-        function updateClock() { const now = new Date(); const timeString = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); const dateString = now.toLocaleDateString('zh-CN', { weekday: 'long', month: 'long', day: 'numeric' }); document.getElementById('main-time').textContent = timeString; document.getElementById('status-bar-time').textContent = timeString; document.getElementById('main-date').textContent = dateString; 
-    // 更新锁屏时钟 (新增)
-    updateLockClock();
+      // ▼▼▼ 步骤 1.1：用下面这【一整块】代码，完整替换掉旧的 updateClock 函数 ▼▼▼
+/* ▼▼▼ 步骤 1：将这一整块全新的功能函数，粘贴到您的JS代码的功能函数定义区 ▼▼▼ */
+
+/**
+ * 【全新添加】显示一个包含多个选项的操作菜单模态框
+ * 这是让图片编辑时能够选择“本地上传”或“URL”的关键函数！
+ * @param {string} title - 模态框的标题
+ * @param {Array<object>} options - 按钮选项数组, e.g., [{ text: '按钮文字', value: '返回值' }]
+ * @returns {Promise<string|null>} - 返回用户点击按钮的value，如果取消则返回null
+ */
+function showChoiceModal(title, options) {
+    return new Promise(resolve => {
+        // 复用你现有的自定义模态框
+        const modal = document.getElementById('preset-actions-modal');
+        const footer = modal.querySelector('.custom-modal-footer');
+        
+        // 清空旧按钮并动态创建新按钮
+        footer.innerHTML = ''; 
+
+        options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.text;
+            button.onclick = () => {
+                modal.classList.remove('visible');
+                resolve(option.value); // 返回被点击按钮的值
+            };
+            footer.appendChild(button);
+        });
+
+        // 添加一个标准的取消按钮
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = '取消';
+        cancelButton.style.marginTop = '8px';
+        cancelButton.style.borderRadius = '8px';
+        cancelButton.style.backgroundColor = '#f0f0f0';
+        cancelButton.onclick = () => {
+            modal.classList.remove('visible');
+            resolve(null); // 用户取消，返回 null
+        };
+        footer.appendChild(cancelButton);
+
+        modal.classList.add('visible');
+    });
 }
+
+
+/**
+ * 【已修复】更新所有时钟（状态栏和锁屏）
+ */
+function updateClock() { 
+    const now = new Date(); 
+    const timeString = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); 
+    const dateString = now.toLocaleDateString('zh-CN', { weekday: 'long', month: 'long', day: 'numeric' }); 
+    
+    // 更新状态栏时钟 (这个元素一直存在)
+    const statusBarTime = document.getElementById('status-bar-time');
+    if (statusBarTime) {
+        statusBarTime.textContent = timeString; 
+    }
+
+    // 更新锁屏时钟 (只有当锁屏元素存在时才更新，避免报错)
+    const lockTime = document.getElementById('lock-main-time');
+    const lockDate = document.getElementById('lock-main-date');
+    if (lockTime) {
+        lockTime.textContent = timeString;
+    }
+    if (lockDate) {
+        lockDate.textContent = dateString;
+    }
+}
+
+
 
 /**
  * 【终极健壮版】解析AI返回的、可能格式不规范的响应内容
@@ -11341,6 +11669,7 @@ function renderWallpaperScreen() {
     renderIconSettings();
 
 document.getElementById('ringtone-url-input').value = state.globalSettings.ringtoneUrl || '';
+loadHomeScreenPresetsToDropdown(); 
 }
 // ▲▲▲ 替换结束 ▲▲▲
         window.renderWallpaperScreenProxy = renderWallpaperScreen;
@@ -16988,6 +17317,100 @@ function closeAiAvatarLibraryModal() {
 }
 
 // ▲▲▲ 新函数粘贴结束 ▲▲▲
+/* ▼▼▼ 步骤 3.2：将这一整块全新的功能函数，粘贴到 init() 函数的上方 ▼▼▼ */
+
+/**
+ * 【全新】在页面加载时，应用已保存的小组件数据
+ */
+function applyWidgetData() {
+    if (!state.globalSettings.widgetData) return;
+    for (const elementId in state.globalSettings.widgetData) {
+        const element = document.getElementById(elementId);
+        const savedValue = state.globalSettings.widgetData[elementId];
+        if (element) {
+            if (element.tagName === 'IMG') {
+                element.src = savedValue;
+            } else {
+                element.textContent = savedValue;
+            }
+        }
+    }
+}
+
+/**
+ * 【全新辅助函数】打开文件选择器，并返回本地图片的Base64编码
+ * @returns {Promise<string|null>} - 返回图片的Base64 Data URL，如果用户取消则返回null
+ */
+function uploadImageLocally() {
+    return new Promise(resolve => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*'; // 只接受图片文件
+
+        input.onchange = e => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = readerEvent => {
+                    resolve(readerEvent.target.result); // 返回Base64字符串
+                };
+                reader.readAsDataURL(file);
+            } else {
+                resolve(null); // 用户关闭了文件选择框
+            }
+        };
+
+        input.click();
+    });
+}
+
+/**
+ * 【全新】处理编辑文字的逻辑
+ * @param {HTMLElement} element - 被点击的文本元素
+ */
+async function handleEditText(element) {
+    const elementId = element.id;
+    const currentValue = element.textContent;
+    const newValue = await showCustomPrompt("修改文字", "请输入新的内容：", currentValue);
+    if (newValue !== null && newValue.trim() !== "") {
+        const trimmedValue = newValue.trim();
+        element.textContent = trimmedValue;
+        state.globalSettings.widgetData[elementId] = trimmedValue;
+        await db.globalSettings.put(state.globalSettings);
+    }
+}
+
+/**
+ * 【全新】处理编辑图片的逻辑 (支持本地上传和URL)
+ * @param {HTMLElement} element - 被点击的图片元素
+ */
+async function handleEditImage(element) {
+    const elementId = element.id;
+
+    const choice = await showChoiceModal("修改图片", [
+        { text: '📁 从本地上传', value: 'local' },
+        { text: '🌐 使用网络URL', value: 'url' }
+    ]);
+
+    let newValue = null;
+
+    if (choice === 'local') {
+        newValue = await uploadImageLocally();
+    } else if (choice === 'url') {
+        newValue = await showCustomPrompt("修改图片", "请输入新的图片URL：", element.src, "url");
+    }
+
+    if (newValue && newValue.trim()) {
+        const trimmedValue = newValue.trim();
+        element.src = trimmedValue;
+        state.globalSettings.widgetData[elementId] = trimmedValue;
+        await db.globalSettings.put(state.globalSettings);
+    } else if (choice === 'url' && newValue !== null) {
+        alert("请输入一个有效的图片URL！");
+    }
+}
+
+/* ▲▲▲ 新功能函数粘贴结束 ▲▲▲ */
 
 // ▼▼▼ 请将这两个【新函数】粘贴到JS功能函数定义区 ▼▼▼
 
@@ -19528,66 +19951,6 @@ async function getCountdownContext() {
     return context;
 }
 
-// ▼▼▼ 【全新】主屏幕滑动功能JS逻辑 ▼▼▼
-const homeScreen = document.getElementById('home-screen');
-const homeScreenSlider = document.querySelector('.home-screen-slider');
-const dots = document.querySelectorAll('.pagination-dots .dot');
-
-let currentPage = 0;
-let touchStartX = 0;
-let touchEndX = 0;
-let isDragging = false;
-
-// 更新小圆点的高亮状态
-function updateDots() {
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentPage);
-    });
-}
-
-// 滑动到指定页面
-function slideToPage(pageIndex) {
-    currentPage = pageIndex;
-    const offset = - (currentPage * 100); // 往左移动100%
-    homeScreenSlider.style.transform = `translateX(${offset}%)`; // 因为容器是200%宽，所以移动50%
-    updateDots();
-}
-
-function handleTouchStart(e) {
-    isDragging = true;
-    touchStartX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-    homeScreenSlider.style.transition = 'none'; // 拖动时禁用动画，实现实时跟随
-}
-
-function handleTouchMove(e) {
-    if (!isDragging) return;
-    const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-    const diffX = currentX - touchStartX;
-    const baseOffset = - (currentPage * 100); // 当前页面的基础偏移量
-    homeScreenSlider.style.transform = `translateX(calc(${baseOffset}% + ${diffX}px))`;
-}
-
-function handleTouchEnd(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    homeScreenSlider.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'; // 恢复动画
-
-    touchEndX = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
-    const diffX = touchEndX - touchStartX;
-    const threshold = 50; // 设置一个滑动阈值，防止误触
-
-    if (diffX < -threshold && currentPage < 1) {
-        // 向左滑动，切换到下一页
-        currentPage++;
-    } else if (diffX > threshold && currentPage > 0) {
-        // 向右滑动，切换到上一页
-        currentPage--;
-    }
-
-    slideToPage(currentPage);
-}
-
-// ▲▲▲ 新JS逻辑结束 ▲▲▲
 
 // ▼▼▼ 【全新】“查角色手机”功能的所有核心函数 ▼▼▼
 
@@ -20586,10 +20949,230 @@ async function handleVideoCallReroll() {
     await triggerAiInCallAction();
 }
 // ▲▲▲ 新函数粘贴结束 ▲▲▲
+// ▼▼▼ 请将这【一整块新函数】粘贴到JS功能函数定义区 ▼▼▼
+
+/**
+ * 应用指定的主题（'light' 或 'dark'）
+ * @param {string} theme - 要应用的主题名称
+ */
+function applyTheme(theme) {
+    const phoneScreen = document.getElementById('phone-screen');
+    const toggleSwitch = document.getElementById('theme-toggle-switch');
+    
+    const isDark = theme === 'dark';
+    
+    // 核心操作：添加或移除 .dark-mode 类
+    phoneScreen.classList.toggle('dark-mode', isDark);
+    
+    // 如果开关存在，就同步它的状态
+    if (toggleSwitch) {
+        toggleSwitch.checked = isDark;
+    }
+    
+    // 将用户的选择保存到本地存储，以便下次打开时记住
+    localStorage.setItem('ephone-theme', theme);
+
+    // 【重要】因为聊天背景色依赖模式，切换后需要重新渲染
+    if (state.activeChatId) {
+        renderChatInterface(state.activeChatId);
+    }
+}
+
+/**
+ * 当用户点击开关时，切换当前的主题
+ */
+function toggleTheme() {
+    const toggleSwitch = document.getElementById('theme-toggle-switch');
+    // 直接根据开关的选中状态来决定新主题
+    const newTheme = toggleSwitch.checked ? 'dark' : 'light';
+    applyTheme(newTheme);
+}
+
+// ▲▲▲ 新函数粘贴结束 ▲▲▲
 
         // ===================================================================
         // 4. 初始化函数 init()
         // ===================================================================
+        /* ▼▼▼ 把这一整块全新的功能函数，粘贴到 init() 函数的上方 ▼▼▼ */
+
+/* ▼▼▼ 把这一整块全新的功能函数，粘贴到 init() 函数的上方 ▼▼▼ */
+        async function init() {
+            // ▼▼▼ 在 init() 函数的【最开头】，粘贴下面这两行代码 ▼▼▼
+            const savedTheme = localStorage.getItem('ephone-theme') || 'light'; // 默认为日间模式
+            applyTheme(savedTheme);
+            // ▲▲▲ 粘贴结束 ▲▲▲
+            // ...你原来的其他 init() 代码...
+        }
+
+/* ▼▼▼ 【V2修正版】主屏幕美化预设核心功能函数 ▼▼▼ */
+
+let activeHomePresetId = null; // 用于追踪当前选中的预设ID
+
+/**
+ * 启用或禁用预设管理按钮
+ */
+function toggleHomePresetButtons(isEnabled) {
+    document.getElementById('apply-home-preset-btn').disabled = !isEnabled;
+    document.getElementById('rename-home-preset-btn').disabled = !isEnabled;
+    document.getElementById('delete-home-preset-btn').disabled = !isEnabled;
+    document.getElementById('export-home-preset-btn').disabled = !isEnabled;
+}
+
+/**
+ * 加载预设到下拉框
+ */
+async function loadHomeScreenPresetsToDropdown() {
+    const selector = document.getElementById('home-preset-selector');
+    selector.innerHTML = '<option value="">-- 请选择一个预设 --</option>';
+    const presets = await db.homeScreenPresets.toArray();
+    presets.forEach(preset => {
+        const option = document.createElement('option');
+        option.value = preset.id;
+        option.textContent = preset.name;
+        selector.appendChild(option);
+    });
+    activeHomePresetId = null; // 重置选择
+    toggleHomePresetButtons(false); // 默认禁用按钮
+}
+
+/**
+ * 【新】当用户从下拉框选择一个预设时
+ */
+function handleHomePresetSelection() {
+    const selector = document.getElementById('home-preset-selector');
+    activeHomePresetId = selector.value ? parseInt(selector.value) : null;
+    // 只有当用户确实选择了一个预设时，才启用相关按钮
+    toggleHomePresetButtons(!!activeHomePresetId);
+}
+
+/**
+ * 【新】应用当前选中的预设
+ */
+async function applySelectedHomeScreenPreset() {
+    if (!activeHomePresetId) {
+        alert("请先从下拉框中选择一个要应用的预设。");
+        return;
+    }
+    const preset = await db.homeScreenPresets.get(activeHomePresetId);
+    if (preset && preset.data) {
+        state.globalSettings.widgetData = preset.data;
+        await db.globalSettings.put(state.globalSettings);
+        applyWidgetData(); // 应用数据
+                // ▼▼▼ 在这里添加下面这整块新代码 ▼▼▼
+        // 【核心新增】检查预设里是否存了图标数据
+        if (preset.data.appIcons) {
+            // 如果有，就用预设里的图标数据覆盖掉当前的全局设置
+            state.globalSettings.appIcons = { ...preset.data.appIcons };
+            await db.globalSettings.put(state.globalSettings);
+            // 立刻应用新的图标到主屏幕上
+            applyAppIcons();
+        }
+        // ▲▲▲ 新代码添加结束 ▲▲▲
+        alert(`已成功应用预设: "${preset.name}"！`);
+        showScreen('home-screen');
+    }
+}
+
+/**
+ * 保存当前的主屏幕设置为一个新的预设
+ */
+async function saveCurrentHomeScreenAsPreset() {
+    const presetName = await showCustomPrompt("保存预设", "请为这个主屏幕美化方案起个名字：");
+    if (!presetName || !presetName.trim()) {
+        if (presetName !== null) alert("名字不能为空！");
+        return;
+    }
+    const presetData = {
+        'profile-banner-img': document.getElementById('profile-banner-img').src,
+        'profile-avatar-img': document.getElementById('profile-avatar-img').src,
+        'profile-username': document.getElementById('profile-username').textContent,
+        'profile-sub-username': document.getElementById('profile-sub-username').textContent,
+        'profile-bio': document.getElementById('profile-bio').textContent,
+        'profile-location': document.getElementById('profile-location').innerHTML,
+        'widget-bubble-1': document.getElementById('widget-bubble-1').textContent,
+        'widget-image-1': document.getElementById('widget-image-1').src,
+        'widget-subtext-1': document.getElementById('widget-subtext-1').textContent,
+        'widget-bubble-2': document.getElementById('widget-bubble-2').textContent,
+        'widget-image-2': document.getElementById('widget-image-2').src,
+        'widget-subtext-2': document.getElementById('widget-subtext-2').textContent,
+        'appIcons': { ...state.globalSettings.appIcons } 
+    };
+    await db.homeScreenPresets.add({ name: presetName.trim(), data: presetData });
+    await loadHomeScreenPresetsToDropdown();
+    alert(`预设 "${presetName.trim()}" 已保存！`);
+}
+
+/**
+ * 重命名选中的预设
+ */
+async function renameSelectedHomeScreenPreset() {
+    if (!activeHomePresetId) return;
+    const currentPreset = await db.homeScreenPresets.get(activeHomePresetId);
+    const newName = await showCustomPrompt("重命名", "请输入新的名称：", currentPreset.name);
+    if (newName && newName.trim()) {
+        await db.homeScreenPresets.update(activeHomePresetId, { name: newName.trim() });
+        await loadHomeScreenPresetsToDropdown();
+        document.getElementById('home-preset-selector').value = activeHomePresetId;
+        alert("重命名成功！");
+    }
+}
+
+/**
+ * 删除选中的预设
+ */
+async function deleteSelectedHomeScreenPreset() {
+    if (!activeHomePresetId) return;
+    const currentPreset = await db.homeScreenPresets.get(activeHomePresetId);
+    const confirmed = await showCustomConfirm("确认删除", `确定要删除预设 "${currentPreset.name}" 吗？`, { confirmButtonClass: 'btn-danger' });
+    if (confirmed) {
+        await db.homeScreenPresets.delete(activeHomePresetId);
+        await loadHomeScreenPresetsToDropdown(); // 这会自动重置选择并禁用按钮
+        alert("预设已删除。");
+    }
+}
+
+/**
+ * 【全新】导出选中的预设
+ */
+async function exportHomeScreenPreset() {
+    if (!activeHomePresetId) return;
+    const preset = await db.homeScreenPresets.get(activeHomePresetId);
+    const blob = new Blob([JSON.stringify(preset, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${preset.name}-HomeScreen.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+/**
+ * 【全新】导入预设文件
+ */
+function importHomeScreenPreset(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            // 简单验证一下文件内容是不是我们需要的格式
+            if (data.name && data.data) {
+                await db.homeScreenPresets.add({ name: `${data.name} (导入)`, data: data.data });
+                await loadHomeScreenPresetsToDropdown();
+                alert(`预设 "${data.name}" 导入成功！`);
+            } else {
+                alert("导入失败：文件格式不正确。");
+            }
+        } catch (error) {
+            alert(`导入失败：文件解析错误。${error.message}`);
+        }
+    };
+    reader.readAsText(file);
+}
+/* ▲▲▲ 新功能函数粘贴结束 ▲▲▲ */
+
+
+
         async function init() {
 
     // ▼▼▼ 在 init() 函数的【最开头】，粘贴下面这两行代码 ▼▼▼
@@ -20622,6 +21205,7 @@ async function handleVideoCallReroll() {
             window.renderWorldBookScreenProxy = renderWorldBookScreen;
 
             await loadAllDataFromDB();
+            applyWidgetData();
 
             // 初始化未读动态计数
             const storedCount = parseInt(localStorage.getItem('unreadPostsCount')) || 0;
@@ -20658,6 +21242,43 @@ applyAppIcons();
             // ==========================================================
             // --- 各种事件监听器 ---
             // ==========================================================
+            // ▼▼▼ 【全新】“查角色手机”功能事件监听器 ▼▼▼
+
+// 1. 绑定主屏幕上的“查手机”APP图标
+//    【核心修复】我们现在用 JS 来绑定事件，而不是用 HTML 的 onclick
+document.getElementById('check-phone-btn').addEventListener('click', openCharacterSelectionScreen);
+
+// 2. 角色选择列表的点击事件 (事件委托)
+document.getElementById('character-selection-list').addEventListener('click', (e) => {
+    const item = e.target.closest('.character-select-item');
+    if (item && item.dataset.chatId) {
+        openCharacterPhone(item.dataset.chatId);
+    }
+});
+
+// 3. 角色手机顶部的“刷新”和“清空”按钮
+document.getElementById('generate-character-data-btn').addEventListener('click', generateCharacterPhoneData);
+document.getElementById('clear-character-data-btn').addEventListener('click', clearCharacterPhoneData);
+
+// ▲▲▲ 事件监听器添加结束 ▲▲▲
+// ▼▼▼ 【V3最终美化版】主屏幕预设功能事件绑定 ▼▼▼
+document.getElementById('home-preset-selector').addEventListener('change', handleHomePresetSelection);
+document.getElementById('apply-home-preset-btn').addEventListener('click', applySelectedHomeScreenPreset);
+// 【核心修改】这里按钮的ID变了
+document.getElementById('save-home-preset-btn').addEventListener('click', saveCurrentHomeScreenAsPreset); 
+document.getElementById('rename-home-preset-btn').addEventListener('click', renameSelectedHomeScreenPreset);
+document.getElementById('delete-home-preset-btn').addEventListener('click', deleteSelectedHomeScreenPreset);
+document.getElementById('export-home-preset-btn').addEventListener('click', exportHomeScreenPreset);
+document.getElementById('import-home-preset-btn').addEventListener('click', () => document.getElementById('import-home-preset-input').click());
+document.getElementById('import-home-preset-input').addEventListener('change', (e) => {
+    importHomeScreenPreset(e.target.files[0]);
+    e.target.value = null;
+});
+
+            document.getElementById('theme-toggle-switch').addEventListener('change', toggleTheme);
+  
+
+
  // ▼▼▼ 这是我们新加的导入功能事件监听 ▼▼▼
         document.getElementById('import-character-card-btn').addEventListener('click', () => {
             // 点击我们的新按钮时，就去触发那个隐藏的文件选择框
@@ -22875,26 +23496,43 @@ document.getElementById('close-ai-avatar-library-btn').addEventListener('click',
 // ▲▲▲ 新增结束 ▲▲▲
 
 // ▼▼▼ 在 init() 的事件监听区域，粘贴这段【新代码】▼▼▼
-document.getElementById('icon-settings-grid').addEventListener('click', async (e) => {
-    if (e.target.classList.contains('change-icon-btn')) {
-        const item = e.target.closest('.icon-setting-item');
-        const iconId = item.dataset.iconId;
-        if (!iconId) return;
+            // ▼▼▼ 【请求4】App图标上传功能升级 (请用这整块代码替换旧的icon-settings-grid监听器) ▼▼▼
+            document.getElementById('icon-settings-grid').addEventListener('click', async (e) => {
+                if (e.target.classList.contains('change-icon-btn')) {
+                    const item = e.target.closest('.icon-setting-item');
+                    const iconId = item.dataset.iconId;
+                    if (!iconId) return;
 
-        const currentUrl = state.globalSettings.appIcons[iconId];
-        const newUrl = await showCustomPrompt(`更换“${item.querySelector('.icon-preview').alt}”图标`, '请输入新的图片URL', currentUrl, 'url');
+                    // 1. 弹出选择模态框
+                    const choice = await showChoiceModal("更换图标", [
+                        { text: '📁 从本地上传', value: 'local' },
+                        { text: '🌐 使用网络URL', value: 'url' }
+                    ]);
 
-        if (newUrl && newUrl.trim().startsWith('http')) {
-            // 仅在内存中更新，等待用户点击“保存”
-            state.globalSettings.appIcons[iconId] = newUrl.trim();
-            // 实时更新设置页面的预览图
-            item.querySelector('.icon-preview').src = newUrl.trim();
-        } else if (newUrl !== null) {
-            alert("请输入一个有效的URL！");
-        }
-    }
-});
-// ▲▲▲ 新代码粘贴结束 ▲▲▲
+                    let newUrl = null;
+
+                    // 2. 根据用户的选择执行不同操作
+                    if (choice === 'local') {
+                        newUrl = await uploadImageLocally(); // 调用我们之前写好的本地上传辅助函数
+                    } else if (choice === 'url') {
+                        const currentUrl = state.globalSettings.appIcons[iconId];
+                        newUrl = await showCustomPrompt(`更换“${item.querySelector('.icon-preview').alt}”图标`, '请输入新的图片URL', currentUrl, 'url');
+                    }
+
+                    // 3. 处理最终结果
+                    if (newUrl && newUrl.trim()) {
+                        const trimmedUrl = newUrl.trim();
+                        // 仅在内存中更新，等待用户点击“保存”
+                        state.globalSettings.appIcons[iconId] = trimmedUrl;
+                        // 实时更新设置页面的预览图
+                        item.querySelector('.icon-preview').src = trimmedUrl;
+                    } else if (newUrl !== null) {
+                        alert("请输入一个有效的URL或选择一个文件！");
+                    }
+                }
+            });
+            // ▲▲▲ 替换结束 ▲▲▲
+
 
 // ▼▼▼ 在 init() 函数的末尾，粘贴这段【全新的事件监听器】 ▼▼▼
 
@@ -23724,18 +24362,6 @@ applyLyricsSettings();
 
 // ▲▲▲ 新代码粘贴结束 ▲▲▲
 
-            // ▼▼▼ 在 init() 函数的事件监听器区域末尾添加 ▼▼▼
-            // 绑定主屏幕滑动事件
-            homeScreen.addEventListener('touchstart', handleTouchStart, { passive: true });
-            homeScreen.addEventListener('touchmove', handleTouchMove, { passive: true });
-            homeScreen.addEventListener('touchend', handleTouchEnd);
-            // 兼容桌面端鼠标拖动
-            homeScreen.addEventListener('mousedown', handleTouchStart);
-            homeScreen.addEventListener('mousemove', handleTouchMove);
-            homeScreen.addEventListener('mouseup', handleTouchEnd);
-            homeScreen.addEventListener('mouseleave', handleTouchEnd); // 防止鼠标拖出屏幕
-            // ▲▲▲ 新代码粘贴结束 ▲▲▲
-
             // ▼▼▼ 【全新】“查角色手机”功能事件监听器 ▼▼▼
 
             // 1. 绑定主屏幕上的“查手机”APP图标
@@ -23871,7 +24497,85 @@ document.querySelector('#background-activity-details').addEventListener('click',
         alert(`已为 ${selectedCheckboxes.length} 个角色将后台活动频率设为 "${freqText}"`);
     }
 });
+// 使用事件委托，为所有可编辑元素统一绑定点击事件
+document.getElementById('home-screen').addEventListener('click', (e) => {
+    const target = e.target;
+    // 检查点击的是否是可编辑的文字
+    if (target.classList.contains('editable-text')) {
+        handleEditText(target);
+    }
+    // 检查点击的是否是可编辑的图片
+    if (target.classList.contains('editable-image')) {
+        handleEditImage(target);
+    }
+});
+// ▼▼▼ 步骤 2.2：在 init() 函数的最末尾，粘贴这整块全新的滑动逻辑 ▼▼▼
 
+const homeScreenSlider = document.querySelector('.home-screen-slider');
+const dots = document.querySelectorAll('.pagination-dots .dot');
+if (homeScreenSlider && dots.length > 0) {
+    let currentPage = 0;
+    let touchStartX = 0;
+    let isDragging = false;
+
+    function updateDots() {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentPage);
+        });
+    }
+
+    function slideToPage(pageIndex) {
+        currentPage = pageIndex;
+        const offset = - (currentPage * 100);
+        homeScreenSlider.style.transform = `translateX(${offset}%)`;
+        updateDots();
+    }
+    
+    function getEventX(e) {
+        return e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    }
+
+    function handleTouchStart(e) {
+        isDragging = true;
+        touchStartX = getEventX(e);
+        homeScreenSlider.style.transition = 'none';
+    }
+
+    function handleTouchMove(e) {
+        if (!isDragging) return;
+        const currentX = getEventX(e);
+        const diffX = currentX - touchStartX;
+        const baseOffset = - (currentPage * 100);
+        homeScreenSlider.style.transform = `translateX(calc(${baseOffset}% + ${diffX}px))`;
+    }
+
+    function handleTouchEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        homeScreenSlider.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        const touchEndX = e.type.includes('touch') ? e.changedTouches[0].clientX : e.clientX;
+        const diffX = touchEndX - touchStartX;
+        const threshold = 50;
+
+        if (diffX < -threshold && currentPage < dots.length - 1) {
+            currentPage++;
+        } else if (diffX > threshold && currentPage > 0) {
+            currentPage--;
+        }
+        slideToPage(currentPage);
+    }
+    
+    const homeScreenContainer = document.getElementById('home-screen');
+    homeScreenContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+    homeScreenContainer.addEventListener('touchmove', handleTouchMove, { passive: true });
+    homeScreenContainer.addEventListener('touchend', handleTouchEnd);
+    homeScreenContainer.addEventListener('mousedown', handleTouchStart);
+    document.addEventListener('mousemove', handleTouchMove);
+    document.addEventListener('mouseup', handleTouchEnd);
+}
+
+// ▲▲▲ 滑动逻辑粘贴结束 ▲▲▲
 
 
 
